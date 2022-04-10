@@ -26,12 +26,12 @@ public class App extends Application {
         StackPane pane = new StackPane();
         Button btn = new Button("Import file");
         FileChooser fc = new FileChooser();
+        fc.setInitialDirectory(new File(System.getProperty("user.dir"), "data"));
         btn.setOnAction(e-> {
             File selectedFile = fc.showOpenDialog(stage);
             String path = selectedFile.getAbsolutePath();
             FileHandler fh = new FileHandler(path);
             fh.read();
-
         });
         boolean add = pane.getChildren().add(btn);
         scene = new Scene(pane, 1000, 640);

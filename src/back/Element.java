@@ -4,7 +4,7 @@ public class Element {
     protected String name;
 
     public Element(String name) {
-        name = name;
+        this.name = name;
     }
 
     public String getName() {

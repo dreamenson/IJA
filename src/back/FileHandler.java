@@ -47,8 +47,7 @@ public class FileHandler {
             case "Class":
                 try {
                     UMLClass aClass = classd.createClass(words[1]);
-                    System.out.println("SSSEEES "+ aClass.getName());
-//                    classd.
+                    System.out.println("SSSEEES "+ words[1] +":"+ aClass.getName());
                 }
                 catch(Exception e) {
                     System.err.println(e);
