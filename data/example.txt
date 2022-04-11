@@ -1,9 +1,19 @@
 @startclass example
 
-Class Student
+Class Student {
+-String id
+-String name
+operation +String name()
+}
 Class Flash
-Class Question
-Class Answer
+Class Question {
+-String id
+-String name
+operation +void test(String a)
+}
+Class Answer {
+operation +void test(String a, int b, char c)
+}
 
 
 Student"1" -- "+"FlashCards : Interacts with

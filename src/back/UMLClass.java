@@ -7,6 +7,7 @@ import java.util.List;
 public class UMLClass extends UMLClassifier {
     private boolean isAbstract;
     List<UMLAttribute> attrArray = new ArrayList<>();
+    List<UMLOperation> operArray = new ArrayList<>();
 
     public UMLClass(java.lang.String name) {
         super(name);
@@ -29,6 +30,16 @@ public class UMLClass extends UMLClassifier {
             }
         }
         return attrArray.add(attr);
+    }
+
+    public boolean addOperation(UMLOperation oper) {
+        String name = oper.getName();
+        for (UMLOperation operation : operArray) {
+            if (operation.getName().equals(name)) {
+                return false;
+            }
+        }
+        return operArray.add(oper);
     }
 
     public int getAttrPosition(UMLAttribute attr) {
