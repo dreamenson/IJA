@@ -1,6 +1,6 @@
 package back;
 
-public class    UMLClassifier extends Element {
+public class UMLClassifier extends Element {
     private final boolean isUserDefined;
 
     public UMLClassifier(String name, boolean isUserDefined) {
@@ -10,7 +10,7 @@ public class    UMLClassifier extends Element {
 
     public UMLClassifier(String name) {
         super(name);
-        this.isUserDefined = true;
+        isUserDefined = true;
     }
 
     public static UMLClassifier forName(String name) {
@@ -18,10 +18,10 @@ public class    UMLClassifier extends Element {
     }
 
     public boolean isUserDefined() {
-        return this.isUserDefined;
+        return isUserDefined;
     }
 
     public String toString() {
-        return this.name+"("+ this.isUserDefined+")";
+        return name+"("+ isUserDefined+")";
     }
 }

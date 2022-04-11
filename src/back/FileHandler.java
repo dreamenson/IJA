@@ -3,12 +3,15 @@ package back;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class FileHandler {
     private final String path;
     private int classType;  // 1=class diagram, 2=sequence diagram
     private ClassDiagram classd;
+    private UMLClass umlClass;
 
     public FileHandler(String name) {
         path = name;
@@ -31,7 +34,6 @@ public class FileHandler {
             case "@startclass":
                 if (classType == 0) {
                     classType = 1;
-                    System.out.println("SSSS "+words[1]);
                     classd = new ClassDiagram(words[1]);
                 }
                 break;
@@ -45,13 +47,46 @@ public class FileHandler {
                 if (classType == 2) classType = 0;
                 break;
             case "Class":
-                try {
-                    UMLClass aClass = classd.createClass(words[1]);
-                    System.out.println("SSSEEES "+ words[1] +":"+ aClass.getName());
+                ClassHandle(words);
+                break;
+            default:
+                if (words[0].matches("^[-+#~].*")) {
+                    AttrHandle(words);
                 }
-                catch(Exception e) {
-                    System.err.println(e);
+                if (words[0].equals("operation")) {
+                    FuncHandle(words);
                 }
         }
+    }
+
+    private void ClassHandle(String[] words) {
+        try {
+            UMLClass aClass = classd.createClass(words[1]);
+            umlClass = null;
+            if (words.length == 3 && Objects.equals(words[2], "{")) {
+                umlClass = aClass;
+            }
+        }
+        catch(Exception e) {
+            System.err.println(e);
+        }
+    }
+
+    private void AttrHandle(String[] words) {
+        UMLAttribute ua = new UMLAttribute(words[1], new UMLClassifier(words[0]));
+        umlClass.addAttribute(ua);
+    }
+
+    private void FuncHandle(String[] words) {
+        System.out.println(Arrays.toString(words));
+        String[] fun = words[2].split("\\(");
+        System.out.println(Arrays.toString(fun));
+        UMLOperation uo = new UMLOperation(fun[0], new UMLClassifier(words[1]));
+        if (!fun[1].equals(")")) {
+            System.out.println(fun[1] + ":" + words[3].replace(")", ""));
+            UMLAttribute ua = new UMLAttribute(words[3].replace(")", ""), new UMLClassifier(fun[1]));
+            uo.addArgument(ua);
+        }
+        umlClass.addOperation(uo);
     }
 }
