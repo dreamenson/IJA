@@ -77,13 +77,13 @@ public class App extends Application {
         // Create MenuItems
         MenuItem newFile = new MenuItem("New file");
 
-        //Image img = new Image("new.png");
+        //Image img = new Image("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\new.png");
         //ImageView view = new ImageView(img);
-        //view.setPreserveRatio(true);
-        //newFile.setGraphic(view);
 
+        newFile.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\new.png"));
 
         MenuItem openFile = new MenuItem("Open File");
+        openFile.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\open_file.png"));
 
         FileChooser fc = new FileChooser();
         fc.setInitialDirectory(new File(System.getProperty("user.dir"), "data"));
@@ -95,17 +95,33 @@ public class App extends Application {
         });
 
         MenuItem saveFile = new MenuItem("Save File");
+        saveFile.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\save_file.png"));
 
         MenuItem Undo = new MenuItem("Undo");
+        Undo.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\undo.png"));
+
         MenuItem Redo = new MenuItem("Redo");
+        Redo.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\redo.png"));
 
         MenuItem newClass = new MenuItem("Class");
+        newClass.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\class.png"));
         MenuItem newRelationship = new MenuItem("Relationship");
+
+        MenuItem AssocationRelationship = new MenuItem("Assocation");
+        AssocationRelationship.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\association.png"));
+        MenuItem GeneralizationRelationship = new MenuItem("Generalization");
+        GeneralizationRelationship.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\generalization.png"));
+        MenuItem InheritanceRelationship = new MenuItem("Inheritance");
+        InheritanceRelationship.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\realization.png"));
+        MenuItem RealizationRelationship = new MenuItem("Realization");
+        MenuItem AggregationRelationship = new MenuItem("Aggregation");
+        MenuItem CompositionRelationship = new MenuItem("Composition");
+
 
         // Add menuItems to the Menus
         fileMenu.getItems().addAll(newFile, openFile, saveFile);
         editMenu.getItems().addAll(Undo,Redo);
-        insertMenu.getItems().addAll(newClass, newRelationship);
+        insertMenu.getItems().addAll(newClass, AssocationRelationship, GeneralizationRelationship, InheritanceRelationship, RealizationRelationship,AggregationRelationship, CompositionRelationship);
 
 
         // Add Menus to the MenuBar
