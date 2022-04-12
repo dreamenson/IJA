@@ -52,6 +52,10 @@ public class FileHandler {
 //        System.out.println(Arrays.toString(classd.getClassList()));
     }
 
+    public ClassDiagram getClassDiagram() {
+        return classd;
+    }
+
     private void parseLine(String line) {
         String[] words = line.split("\\s+");
         switch (words[0]) {
