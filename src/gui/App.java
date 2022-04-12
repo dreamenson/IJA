@@ -1,12 +1,6 @@
 package gui;
 
-import java.awt.*;
-import java.applet.*;
 import back.FileHandler;
-
-import java.awt.event.ActionEvent;
-import java.beans.EventHandler;
-import java.io.*;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.application.Application;
@@ -30,12 +25,30 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+import javafx.scene.shape.Rectangle;
 
 
 import java.io.File;
@@ -46,6 +59,7 @@ import java.io.File;
 public class App extends Application {
 
     private static Scene scene;
+
 
     @Override
     public void start(Stage stage) {
@@ -127,12 +141,31 @@ public class App extends Application {
         // Add Menus to the MenuBar
         menuBar.getMenus().addAll(fileMenu, editMenu, insertMenu, helpMenu, exitMenu);
 
+
+        Rectangle rect=new Rectangle(); //instantiating Rectangle
+        rect.setX(100); //setting the X coordinate of upper left //corner of rectangle
+        rect.setY(100); //setting the Y coordinate of upper left //corner of rectangle
+        rect.setWidth(100); //setting the width of rectangle
+        rect.setHeight(100); // setting the height of rectangle
+        rect.setFill(Color.WHITE);
+
+        Text text = new Text("Class");
+
+        StackPane stack = new StackPane();
+        stack.getChildren().addAll(rect, text);
+
+
         BorderPane root = new BorderPane();
         root.setTop(menuBar);
-        Scene scene = new Scene(root, 1000, 640);
+        root.setCenter(stack);
+
+
+        Scene scene = new Scene(root, 600, 600);
 
         stage.setScene(scene);
         stage.show();
+
+
     }
 
     public static void main(String[] args) {
