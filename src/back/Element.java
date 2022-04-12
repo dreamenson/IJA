@@ -1,5 +1,8 @@
 package back;
 
+/**
+ * @author Viliam Holik
+ */
 public class Element {
     protected String name;
 

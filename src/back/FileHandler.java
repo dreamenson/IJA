@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Trieda reprezentuje pracu so suborom, ktoreho obsahom je UML diagram (pripadne viac). Obsahuje absolutnu cestu k danemu suboru.
+ * Trieda reprezentuje pracu so suborom, ktoreho obsahom je UMLDiagram (pripadne viac). Obsahuje absolutnu cestu k danemu suboru.
  *
  * @author Viliam Holik - xholik14
  */
@@ -88,15 +88,10 @@ public class FileHandler {
     }
 
     private void ClassHandle(String[] words) {
-        try {
-            UMLClass aClass = classd.createClass(words[1]);
-            umlClass = null;
-            if (words.length == 3 && Objects.equals(words[2], "{")) {
-                umlClass = aClass;
-            }
-        }
-        catch(Exception e) {
-            System.err.println(e);
+        UMLClass aClass = classd.createClass(words[1]);
+        umlClass = null;
+        if (words.length == 3 && Objects.equals(words[2], "{")) {
+            umlClass = aClass;
         }
     }
 
