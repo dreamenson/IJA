@@ -1,6 +1,8 @@
+//author Pavol Babjak - xbabja03
+
 package gui;
 
-import back.FileHandler;
+import back.*;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -17,13 +19,14 @@ import javafx.scene.image.ImageView;
 
 import java.io.File;
 
+
 /**
  * JavaFX App
  */
 public class App extends Application {
 
     private static Scene scene;
-
+    private ClassDiagram classd;
 
     @Override
     public void start(Stage stage) {
@@ -58,39 +61,30 @@ public class App extends Application {
         //Image img = new Image("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\new.png");
         //ImageView view = new ImageView(img);
 
-        newFile.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\new.png"));
+        newFile.setGraphic(new ImageView("file:src/gui/graphics/new.png"));
 
         MenuItem openFile = new MenuItem("Open File");
-        openFile.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\open_file.png"));
-
-        FileChooser fc = new FileChooser();
-        fc.setInitialDirectory(new File(System.getProperty("user.dir"), "data"));
-        openFile.setOnAction(e-> {
-            File selectedFile = fc.showOpenDialog(stage);
-            String path = selectedFile.getAbsolutePath();
-            FileHandler fh = new FileHandler(path);
-            fh.read();
-        });
+        openFile.setGraphic(new ImageView("file:src/gui/graphics/open_file.png"));
 
         MenuItem saveFile = new MenuItem("Save File");
-        saveFile.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\save_file.png"));
+        saveFile.setGraphic(new ImageView("file:src/gui/graphics/save_file.png"));
 
         MenuItem Undo = new MenuItem("Undo");
-        Undo.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\undo.png"));
+        Undo.setGraphic(new ImageView("file:src/gui/graphics/undo.png"));
 
         MenuItem Redo = new MenuItem("Redo");
-        Redo.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\redo.png"));
+        Redo.setGraphic(new ImageView("file:src/gui/graphics/redo.png"));
 
         MenuItem newClass = new MenuItem("Class");
-        newClass.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\class.png"));
+        newClass.setGraphic(new ImageView("file:src/gui/graphics/class.png"));
         MenuItem newRelationship = new MenuItem("Relationship");
 
         MenuItem AssocationRelationship = new MenuItem("Assocation");
-        AssocationRelationship.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\association.png"));
+        AssocationRelationship.setGraphic(new ImageView("file:src/gui/graphics/association.png"));
         MenuItem GeneralizationRelationship = new MenuItem("Generalization");
-        GeneralizationRelationship.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\generalization.png"));
+        GeneralizationRelationship.setGraphic(new ImageView("file:src/gui/graphics/generalization.png"));
         MenuItem InheritanceRelationship = new MenuItem("Inheritance");
-        InheritanceRelationship.setGraphic(new ImageView("file:C:\\Users\\Pavol\\IdeaProjects\\IJA\\src\\gui\\graphics\\realization.png"));
+        InheritanceRelationship.setGraphic(new ImageView("file:src/gui/graphics/realization.png"));
         MenuItem RealizationRelationship = new MenuItem("Realization");
         MenuItem AggregationRelationship = new MenuItem("Aggregation");
         MenuItem CompositionRelationship = new MenuItem("Composition");
@@ -105,7 +99,6 @@ public class App extends Application {
         // Add Menus to the MenuBar
         menuBar.getMenus().addAll(fileMenu, editMenu, insertMenu, helpMenu, exitMenu);
 
-
         Region rect=new Region(); //instantiating Rectangle
         //rect.setX(100); //setting the X coordinate of upper left //corner of rectangle
         //rect.setY(100); //setting the Y coordinate of upper left //corner of rectangle
@@ -119,16 +112,29 @@ public class App extends Application {
         line.setEndX(100); //setting ending X point of Line
         line.setEndY(0); //setting ending Y point of Line
 
-        Text text = new Text("Class");
-
         StackPane stack = new StackPane();
-        stack.getChildren().addAll(rect, text, line);
 
+        //classd.getClassList().forEach( (n) -> {
+        //    //Text text = new Text(n.getName());
+            stack.getChildren().addAll(rect, line);
+      //  });
 
         BorderPane root = new BorderPane();
         root.setTop(menuBar);
         root.setCenter(stack);
 
+        FileChooser fc = new FileChooser();
+        fc.setInitialDirectory(new File(System.getProperty("user.dir"), "data"));
+        openFile.setOnAction(e-> {
+            File selectedFile = fc.showOpenDialog(stage);
+            String path = selectedFile.getAbsolutePath();
+            FileHandler fh = new FileHandler(path);
+            fh.read();
+            classd = fh.getClassDiagram();
+            //StackPane stack = new StackPane();
+            //classd.getClassList().forEach( (n) -> {System.out.println("Pes " + n.getName());Text text = new Text(n.getName());stack.getChildren().addAll(text);});
+
+        });
 
         Scene scene = new Scene(root, 600, 600);
         scene.getStylesheets().add("css.css");
