@@ -1,5 +1,8 @@
 package back;
 
+/**
+ * @author Viliam Holik
+ */
 public class UMLAttribute extends Element {
     protected UMLClassifier type;
 

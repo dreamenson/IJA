@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author Viliam Holik
+ */
 public class ClassDiagram extends Element {
     List<UMLClass> classList = new ArrayList<>();
 

@@ -1,5 +1,8 @@
 package back;
 
+/**
+ * @author Viliam Holik
+ */
 public class UMLClassifier extends Element {
     private final boolean isUserDefined;
 
