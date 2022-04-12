@@ -11,11 +11,11 @@ public class UMLClass extends UMLClassifier {
 
     public UMLClass(java.lang.String name) {
         super(name);
-        this.isAbstract = false;
+        isAbstract = false;
     }
 
     public boolean isAbstract() {
-        return this.isAbstract;
+        return isAbstract;
     }
 
     public void setAbstract(boolean isAbstract) {
@@ -54,7 +54,11 @@ public class UMLClass extends UMLClassifier {
         return 0;
     }
 
-    public java.util.List<UMLAttribute> getAttributes() {
+    public List<UMLAttribute> getAttributes() {
         return Collections.unmodifiableList(attrArray);
+    }
+
+    public List<UMLOperation> getOperations() {
+        return Collections.unmodifiableList(operArray);
     }
 }
