@@ -25,6 +25,11 @@
         <directory>dest</directory>
         <outputDirectory>build</outputDirectory>
         <sourceDirectory>src</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>src/styles</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

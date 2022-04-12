@@ -1,0 +1,16 @@
+Region
+{
+-fx-background-color: white;
+-fx-border-style: solid;
+-fx-border-width: 1;
+-fx-border-color: black;
+-fx-display: block;
+-fx-justify-content: top;
+}
+
+Text{
+-fx-text-align: top;
+-fx-font-weight: bold;
+-fx-font-size: 20px;
+-fx-padding: 5px 15px;
+}

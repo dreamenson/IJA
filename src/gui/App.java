@@ -3,52 +3,16 @@ package gui;
 import back.FileHandler;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
+import javafx.scene.shape.Line;
 import javafx.scene.text.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-import javafx.application.Application;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellEditEvent;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.stage.Stage;
-import javafx.scene.shape.Rectangle;
 
 
 import java.io.File;
@@ -142,17 +106,23 @@ public class App extends Application {
         menuBar.getMenus().addAll(fileMenu, editMenu, insertMenu, helpMenu, exitMenu);
 
 
-        Rectangle rect=new Rectangle(); //instantiating Rectangle
-        rect.setX(100); //setting the X coordinate of upper left //corner of rectangle
-        rect.setY(100); //setting the Y coordinate of upper left //corner of rectangle
-        rect.setWidth(100); //setting the width of rectangle
-        rect.setHeight(100); // setting the height of rectangle
-        rect.setFill(Color.WHITE);
+        Region rect=new Region(); //instantiating Rectangle
+        //rect.setX(100); //setting the X coordinate of upper left //corner of rectangle
+        //rect.setY(100); //setting the Y coordinate of upper left //corner of rectangle
+        //rect.setWidth(100); //setting the width of rectangle
+        //rect.setHeight(100); // setting the height of rectangle
+        //rect.setFill(Color.WHITE);
+        //rect.setStyle("-fx-background-color: white; -fx-border-style: solid; -fx-border-width: 1; -fx-border-color: black; -fx-min-width: 100; -fx-min-height:100; -fx-max-width:100; -fx-max-height: 100;");
+        Line line = new Line(); //instantiating Line class
+        line.setStartX(0); //setting starting X point of Line
+        line.setStartY(0); //setting starting Y point of Line
+        line.setEndX(100); //setting ending X point of Line
+        line.setEndY(0); //setting ending Y point of Line
 
         Text text = new Text("Class");
 
         StackPane stack = new StackPane();
-        stack.getChildren().addAll(rect, text);
+        stack.getChildren().addAll(rect, text, line);
 
 
         BorderPane root = new BorderPane();
@@ -161,6 +131,7 @@ public class App extends Application {
 
 
         Scene scene = new Scene(root, 600, 600);
+        scene.getStylesheets().add("css.css");
 
         stage.setScene(scene);
         stage.show();
