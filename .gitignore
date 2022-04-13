@@ -3,6 +3,7 @@
 build/
 dest/
 lib/*.jar
+doc/
 *.iml
 target/
 classes/
