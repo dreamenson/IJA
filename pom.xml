@@ -101,6 +101,8 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.3.2</version>
                 <configuration>
+                    <show>private</show>
+                    <sourcepath>${project.basedir}/src</sourcepath>
                     <reportOutputDirectory>${project.basedir}/doc</reportOutputDirectory>
                     <destDir>doc</destDir>
                 </configuration>
