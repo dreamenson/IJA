@@ -48,5 +48,7 @@ public class ClassDiagram extends Element {
     public List<UMLClass> getClassList() {
         return Collections.unmodifiableList(classList);
     }
+
+
 }
 

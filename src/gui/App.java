@@ -5,8 +5,10 @@ package gui;
 import back.*;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.*;
 import javafx.stage.FileChooser;
@@ -18,15 +20,17 @@ import javafx.scene.image.ImageView;
 
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
  * JavaFX App
  */
+
 public class App extends Application {
 
     private static Scene scene;
-    private ClassDiagram classd;
+    public ClassDiagram classd;
 
     @Override
     public void start(Stage stage) {
@@ -89,39 +93,39 @@ public class App extends Application {
         MenuItem AggregationRelationship = new MenuItem("Aggregation");
         MenuItem CompositionRelationship = new MenuItem("Composition");
 
-
         // Add menuItems to the Menus
         fileMenu.getItems().addAll(newFile, openFile, saveFile);
         editMenu.getItems().addAll(Undo,Redo);
         insertMenu.getItems().addAll(newClass, AssocationRelationship, GeneralizationRelationship, InheritanceRelationship, RealizationRelationship,AggregationRelationship, CompositionRelationship);
 
-
         // Add Menus to the MenuBar
         menuBar.getMenus().addAll(fileMenu, editMenu, insertMenu, helpMenu, exitMenu);
 
-        Region rect=new Region(); //instantiating Rectangle
-        //rect.setX(100); //setting the X coordinate of upper left //corner of rectangle
-        //rect.setY(100); //setting the Y coordinate of upper left //corner of rectangle
-        //rect.setWidth(100); //setting the width of rectangle
-        //rect.setHeight(100); // setting the height of rectangle
-        //rect.setFill(Color.WHITE);
-        //rect.setStyle("-fx-background-color: white; -fx-border-style: solid; -fx-border-width: 1; -fx-border-color: black; -fx-min-width: 100; -fx-min-height:100; -fx-max-width:100; -fx-max-height: 100;");
-        Line line = new Line(); //instantiating Line class
-        line.setStartX(0); //setting starting X point of Line
-        line.setStartY(0); //setting starting Y point of Line
-        line.setEndX(100); //setting ending X point of Line
-        line.setEndY(0); //setting ending Y point of Line
-
-        StackPane stack = new StackPane();
-
         //classd.getClassList().forEach( (n) -> {
         //    //Text text = new Text(n.getName());
-            stack.getChildren().addAll(rect, line);
+          //  stack.getChildren().addAll(rect, line);
       //  });
 
-        BorderPane root = new BorderPane();
-        root.setTop(menuBar);
-        root.setCenter(stack);
+       // BorderPane root = new BorderPane();
+       // root.setBottom(menuBar);
+
+        //StackPane stack = new StackPane();
+        //root.setCenter(stack);
+
+        //StackPane stack = new StackPane();
+
+        Pane pane = new Pane();
+
+
+
+        ///menuBar.setLayoutX(100);
+        //menuBar.setLayoutY(100);
+
+        //menuBar.relocate(200,200);
+
+        //menuBar.relocate().bind(pane.widthProperty());
+
+        pane.getChildren().addAll(menuBar);
 
         FileChooser fc = new FileChooser();
         fc.setInitialDirectory(new File(System.getProperty("user.dir"), "data"));
@@ -131,22 +135,187 @@ public class App extends Application {
             FileHandler fh = new FileHandler(path);
             fh.read();
             classd = fh.getClassDiagram();
-            //StackPane stack = new StackPane();
-            //classd.getClassList().forEach( (n) -> {System.out.println("Pes " + n.getName());Text text = new Text(n.getName());stack.getChildren().addAll(text);});
+
+            //maxLeght(0,classd);
+            drawTable(pane,0,classd);
+
+            //System.out.println("The size of the ArrayList is: " + classd.getClassList().size());
+
+
+            classd.getClassList().forEach((n) ->
+            {
+                //System.out.println("Pes " + n.getName());
+                Text text = new Text(n.getName());
+                text.setX(111);
+                text.setY(50);
+                //stack.getChildren().addAll(text);
+            });
 
         });
 
-        Scene scene = new Scene(root, 600, 600);
+
+
+        Scene scene = new Scene(pane, 600, 600);
         scene.getStylesheets().add("css.css");
 
         stage.setScene(scene);
         stage.show();
+
+        ChangeListener stageSizeListener = (observable, oldValue, newValue) -> {
+
+
+                System.out.println("Height: " + stage.getHeight() + " Width: " + stage.getWidth());
+                menuBar.relocate(stage.getWidth()-600,stage.getHeight()-600);
+             };
+
+        stage.widthProperty().addListener(stageSizeListener);
+        stage.heightProperty().addListener(stageSizeListener);
+
+        //menuBar.widthProperty().addListener(stageSizeListener);
+        //menuBar.heightProperty().addListener(stageSizeListener);
 
 
     }
 
     public static void main() {
         launch();
+    }
+
+    public static AtomicInteger maxLeght(int classcount,ClassDiagram classd)
+    {
+        System.out.println("vosiel som do cyklusu");
+        //cyklus na zistenie najdlhsej veci z tabulky
+
+        String name = classd.getClassList().get(classcount).toString();
+        name= name.substring(0, name.length() - 6);
+        //System.out.println("name is: " + name);
+
+        AtomicInteger maxLenght = new AtomicInteger(0);
+
+        //System.out.println("Class for test is: " + classd.getClassList().get(classcount).getName());
+
+            if (classd.getClassList().get(classcount).getName().length() > maxLenght.get())
+            {
+                maxLenght.set(classd.getClassList().get(classcount).getName().length());
+            }
+
+            classd.getClassList().get(classcount).getAttributes().forEach( (a) ->
+            {
+                String tmp = a.getType().getName() + ":" + a.getName();
+                if (tmp.length() > maxLenght.get())
+                {
+                    maxLenght.set(tmp.length());
+                }
+            });
+
+            classd.getClassList().get(classcount).getOperations().forEach( (o) ->
+            {
+                String tmp = o.getType().getName() + ":" + o.getName();
+                if (tmp.length() > maxLenght.get())
+                {
+                    maxLenght.set(tmp.length());
+                }
+                o.getArguments().forEach( (a) ->
+                {
+                    if (a.getType().getName().length() > maxLenght.get())
+                    {
+                        maxLenght.set(a.getType().getName().length());
+                    }
+                });
+
+                //maxLenght.set(0);
+            });
+            System.out.println("Maxleghth je: "+maxLenght);
+
+        return maxLenght;
+    }
+
+    public static AtomicInteger totalHeight(int classcount,ClassDiagram classd)
+    {
+
+        AtomicInteger count = new AtomicInteger(0);
+
+        //classd.getClassList().get(classcount).getAttributes().size();
+
+        //classd.getClassList().get(classcount).getOperations().size();
+
+        count.set (classd.getClassList().get(classcount).getAttributes().size() + classd.getClassList().get(classcount).getOperations().size());
+            //maxLenght.set(0);
+
+        System.out.println("toitalHeight je  "+count);
+
+        return count;
+    }
+
+    public static void drawTable(Pane pane,int classcount,ClassDiagram classd)
+    {
+        String className = classd.getClassList().get(classcount).getName();
+        int maxLenght = maxLeght(classcount,classd).intValue();
+
+        int attrCount = classd.getClassList().get(classcount).getAttributes().size();
+        int operCount = classd.getClassList().get(classcount).getOperations().size();
+        int totalCount = attrCount + operCount;
+        //System.out.println("Maxleghth classcountu " + classcount +" je: "+ maxLenght);
+        Region rect=new Region(); //instantiating Rectangle
+        int startX = 100;
+        int startY = 100;
+        rect.setLayoutX(startX); //setting the X coordinate of upper left //corner of rectangle
+        rect.setLayoutY(startY); //setting the Y coordinate of upper left //corner of rectangle
+        rect.setPrefWidth(maxLenght*10); //setting the width of rectangle
+        rect.setPrefHeight(startY+30+20*totalCount); // setting the height of rectangle
+        //rect.setFill(Color.WHITE);
+        //rect.setStyle("-fx-background-color: white; -fx-border-style: solid; -fx-border-width: 1; -fx-border-color: black; -fx-min-width: 100; -fx-min-height:100; -fx-max-width:100; -fx-max-height: 100;");
+        Line line = new Line(); //instantiating Line class
+        line.setStartX(startX); //setting starting X point of Line
+        line.setStartY(startY+30); //setting starting Y point of Line
+        line.setEndX(startX+maxLenght*10); //setting ending X point of Line
+        line.setEndY(startY+30); //setting ending Y point of Line
+        Text text = new Text(className);
+        text.setStyle("-fx-font-size: 15;-fx-font-weight: bold;");
+
+        text.setX(startX+5+(maxLenght*10/2) - ((className.length()*10) / 2));
+        //text.setX(startX + maxLenght*10 - ((className.length()*10) / 2));
+        //text.setX(100);
+        text.setY(startY+20);
+
+        Line line2 = new Line(); //instantiating Line class
+        line2.setStartX(startX); //setting starting X point of Line
+        line2.setStartY(startY+30+attrCount*20); //setting starting Y point of Line
+        line2.setEndX(startX+maxLenght*10); //setting ending X point of Line
+        line2.setEndY(startY+30+attrCount*20); //setting ending Y point of Line
+
+        System.out.println("attrcount je " + attrCount);
+
+        for (int i = 0; i < attrCount; i++) {
+            //Text text = new Text(classd.getClassList().get(1).getAttributes().getType().getName());
+            Text text2 = new Text(classd.getClassList().get(0).getAttributes().get(1).getType().getName() + ":" + classd.getClassList().get(0).getAttributes().get(1).getName());
+            //classd.getClassList().get(1).getAttributes().get(i).getType().getName();
+            //classd.getClassList().get(1).getAttributes().forEach( (a) ->
+            //{
+               // String type = a.getType().getName();
+               // System.out.println(type + ":" + a.getName());
+                //text2.setText( );
+                System.out.println(classd.getClassList().get(0).getAttributes().get(i).getType().getName() + ":" + classd.getClassList().get(0).getAttributes().get(i).getName() );
+                text2.setStyle("-fx-font-size: 15;-fx-font-weight: normal;");
+                text2.setX(startX);
+                text2.setY(startY+20+((i+1)*20));
+                pane.getChildren().add(text2);
+
+            //};
+
+           // text.setStyle("-fx-font-size: 15;-fx-font-weight: bold;");
+
+            //text.setX(startX);
+            //text.setX(startX + maxLenght*10 - ((className.length()*10) / 2));
+            //text.setX(100);
+           // text.setY(startY+20+(i*20));
+            //pane.getChildren().addAll(text);
+
+        }
+
+        pane.getChildren().addAll(rect,line,line2,text);
+
+
     }
 
 }
