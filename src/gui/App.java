@@ -142,23 +142,23 @@ public class App extends Application {
             FileHandler fh = new FileHandler(path);
             fh.read();
             classd = fh.getClassDiagram();
-           // rootpane.getChildren().clear();
-         //   rootpane.getChildren().add(menuBar);
+            // rootpane.getChildren().clear();
+            //   rootpane.getChildren().add(menuBar);
 
             //maxLeght(0,classd);
-            drawTable(rootpane, 1, classd);
+            //  drawTable(rootpane, 1, classd);
 
             //System.out.println("The size of the ArrayList is: " + classd.getClassList().size());
 
 
-            classd.getClassList().forEach((n) ->
+         /*   classd.getClassList().forEach((n) ->
             {
                 //System.out.println("Pes " + n.getName());
                 Text text = new Text(n.getName());
                 text.setX(111);
                 text.setY(50);
                 //stack.getChildren().addAll(text);
-            });
+            });*/
 
         });
 
@@ -181,14 +181,13 @@ public class App extends Application {
         //menuBar.heightProperty().addListener(stageSizeListener);
 
 
-
-
     }
 
     public static void main() {
         launch();
     }
-
+}
+/*
     public static AtomicInteger maxLeght(int classcount, ClassDiagram classd) {
         System.out.println("vosiel som do cyklusu");
         //cyklus na zistenie najdlhsej veci z tabulky
@@ -455,7 +454,7 @@ public class App extends Application {
                 pane.setTranslateX(e.getSceneX() - startDragX);
                 pane.setTranslateY(e.getSceneY() - startDragY);
             });*/
-
+/*
         }
         table.getChildren().add(0,classname);
         table.getChildren().add(0,line2);
@@ -479,3 +478,4 @@ public class App extends Application {
 }
 
 }
+*/
