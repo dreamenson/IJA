@@ -1,7 +1,7 @@
 package back;
 
 /**
- * Trieda reprezentuje vztahy medzi jednotlivymi Class-ami v ClassDiagram-e
+ * Trieda reprezentuje vztahy medzi jednotlivymi Class-ami v diagrame tried
  * @author Viliam Holik
  */
 public class UMLRelation extends Element {

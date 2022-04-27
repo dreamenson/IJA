@@ -9,7 +9,6 @@ import java.util.Objects;
 
 /**
  * Trieda reprezentuje pracu so suborom, ktoreho obsahom je UMLDiagram (pripadne viac). Obsahuje absolutnu cestu k danemu suboru.
- *
  * @author Viliam Holik - xholik14
  */
 public class FileHandler {
@@ -18,10 +17,17 @@ public class FileHandler {
     private ClassDiagram classd;
     private UMLClass umlClass;
 
+    /**
+     * Vytvori objekt pre pracu so suborom
+     * @param name retazec absolutnej cesty k suboru s UML diagramom
+     */
     public FileHandler(String name) {
         path = name;
     }
 
+    /**
+     * Cita postupne riadok za riadkom zo vstupneho suboru a parsuje tieto riadky
+     */
     public void read() {
         try {
             List<String> allLines = Files.readAllLines(Paths.get(path));
@@ -53,10 +59,18 @@ public class FileHandler {
 //        System.out.println(Arrays.toString(classd.getClassList()));
     }
 
+    /**
+     * Vracia instanciu triedy ClassDiagram
+     * @return instancia triedy ClassDiagram
+     */
     public ClassDiagram getClassDiagram() {
         return classd;
     }
 
+    /**
+     * Funkcia parsuje riadok
+     * @param line riadok zo vstupneho suboru
+     */
     private void parseLine(String line) {
         String[] words = line.split("\\s+");
         switch (words[0]) {
@@ -93,6 +107,10 @@ public class FileHandler {
         }
     }
 
+    /**
+     * Vytvori Class-u s danym nazvom
+     * @param words pole retazcov z parsovania riadku
+     */
     private void ClassHandle(String[] words) {
         UMLClass aClass = classd.createClass(words[1]);
         umlClass = null;
@@ -101,11 +119,19 @@ public class FileHandler {
         }
     }
 
+    /**
+     * Vytvori instanciu atributu a prida ho k danej Class-e
+     * @param words pole retazcov z parsovania riadku
+     */
     private void AttrHandle(String[] words) {
         UMLAttribute ua = new UMLAttribute(words[1], new UMLClassifier(words[0]));
         umlClass.addAttribute(ua);
     }
 
+    /**
+     * Vytvori instanciu operacie a prida k danej Class-e
+     * @param words pole retazcov z parsovania riadku
+     */
     private void FuncHandle(String[] words) {
         String[] fun = words[2].split("\\(");
         UMLOperation uo = new UMLOperation(fun[0], new UMLClassifier(words[1]));
@@ -120,6 +146,11 @@ public class FileHandler {
         umlClass.addOperation(uo);
     }
 
+    /**
+     * Vytvori instancie argumentov pre operaciu Class-y a prida ich k danej operacii
+     * @param words pole retazcov z parsovania riadku
+     * @param uo UML operacia do ktorej sa pridaju argumenty
+     */
     private void FuncParamHandle(String[] words, UMLOperation uo) {
         int size = words.length;
         for (int i=4; i < size; i=i+2) {
@@ -129,6 +160,10 @@ public class FileHandler {
         }
     }
 
+    /**
+     * Vytvorenie instancie relacie pre konkretne Class-y
+     * @param line riadok zo vstupneho suboru
+     */
     private void RelationHandle(String line) {
         String[] relation = line.split("\\s*:\\s*");
         UMLRelation ur = classd.createRelation(relation[3], relation[0], relation[2], relation[1]);
