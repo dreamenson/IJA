@@ -15,11 +15,9 @@ Class Answer {
 operation +void test(String a, int b, char c)
 }
 
-
-Student : 1 -- + : FlashCards : Interacts with
-FlashCards : 1 o-- 1 : Questions : has
-FlashCards 1 o-- 1 Answers : has
-Answers 1 *-- 1 Wrong : has
-Answers 1 *-- 1 Right : has
+Student : 1 -- + : Flash : Interacts with
+Flash : 1 o-- 1 : Question : has
+Flash : 1 o-- 1 :Answer : has
+Answer:1 *-- 1: Student : has
 
 @endclass

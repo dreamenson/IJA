@@ -49,6 +49,7 @@ public class FileHandler {
                 System.out.println("}");
             });
         });
+        classd.getRelationList().forEach( (n) -> System.out.println(n.getFirstClass().getName() + " : " + n.getRelation() + " : " + n.getSecondClass().getName() + " : " + n.getName()));
 //        System.out.println(Arrays.toString(classd.getClassList()));
     }
 
@@ -80,9 +81,14 @@ public class FileHandler {
             default:
                 if (words[0].matches("^[-+#~].*")) {
                     AttrHandle(words);
+                    break;
                 }
                 if (words[0].equals("operation")) {
                     FuncHandle(words);
+                    break;
+                }
+                if (words[0].matches("[A-Za-z].*")) {
+                    RelationHandle(line);
                 }
         }
     }
@@ -120,6 +126,14 @@ public class FileHandler {
             String name = words[i+1].replaceAll("[,)]", "");
             UMLAttribute ua = new UMLAttribute(name, new UMLClassifier(words[i]));
             uo.addArgument(ua);
+        }
+    }
+
+    private void RelationHandle(String line) {
+        String[] relation = line.split("\\s*:\\s*");
+        UMLRelation ur = classd.createRelation(relation[3], relation[0], relation[2], relation[1]);
+        if (ur == null) {
+            System.out.println("chyba pri relacii");
         }
     }
 }
