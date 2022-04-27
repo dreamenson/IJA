@@ -433,7 +433,7 @@ public class App extends Application {
         pane.setOnMouseClicked((MouseEvent event) -> {
             System.out.println("mouseClicked");
         });
-
+ //comment
 
     //line,line2,classname,attributes
 
