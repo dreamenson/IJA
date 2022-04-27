@@ -7,6 +7,7 @@ operation +String name(String a, int b, char c)
 operation +String nameo(String a, cr c)
 operation +String namepes()
 }
+Interface Jooz
 Class Flash
 Class Question {
 -String id
@@ -17,6 +18,7 @@ Class Answer {
 operation +void test(String a, int b, char c)
 }
 
+Jooz :<|-- : Flash :
 Student : 1 -- + : Flash : Interacts with
 Flash : 1 o-- 1 : Question : has
 Flash : 1 o-- 1 :Answer : has
