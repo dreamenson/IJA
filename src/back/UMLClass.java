@@ -17,7 +17,7 @@ public class UMLClass extends UMLClassifier {
      * Vytvori instanciu Class-y, Class-a nie je abstraktna
      * @param name nazov triedy
      */
-    public UMLClass(java.lang.String name) {
+    public UMLClass(String name) {
         super(name);
         isAbstract = false;
     }

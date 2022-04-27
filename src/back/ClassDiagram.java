@@ -9,7 +9,7 @@ import java.util.List;
  * @author Viliam Holik
  */
 public class ClassDiagram extends Element {
-    List<UMLClass> classList = new ArrayList<>();
+    List<UMLClassifier> classList = new ArrayList<>();
     List<UMLRelation> relationList = new ArrayList<>();
 
     /**
@@ -37,6 +37,22 @@ public class ClassDiagram extends Element {
     }
 
     /**
+     * Vytvori instanciu rozhrania a vlozi ju do diagramu. Pokial sa tam uz nachadza rozhranie s rovnakym nazvom, neurobi nic
+     * @param name nazov vytvaraneho rozhrania
+     * @return instancia vytvoreneho rozhrania, ak rozhranie s danym nazvom uz existuje vracia null
+     */
+    public UMLInterface createInterface(String name) {
+        for (UMLClassifier umlClass : classList) {
+            if (name.equals(umlClass.getName())){
+                return null;
+            }
+        }
+        UMLInterface tmp = new UMLInterface(name);
+        classList.add(tmp);
+        return tmp;
+    }
+
+    /**
      * Vytvori instanciu triedy UMLRelation a vlozi ju do diagramu. Pokial sa tam uz nachadza relacia s rovnakym nazvom, neurobi nic
      * @param name nazov vztahu
      * @param firstC prva Class-a, ktora je vo vztahu
@@ -45,8 +61,8 @@ public class ClassDiagram extends Element {
      * @return instancia vytvorenej relacie, ak neexistuju zadane Class-y vracia null
      */
     public UMLRelation createRelation(String name, String firstC, String secondC, String relation) {
-        UMLClass first = findClass(firstC);
-        UMLClass second = findClass(secondC);
+        UMLClassifier first = findClass(firstC);
+        UMLClassifier second = findClass(secondC);
         if(first == null || second == null){
             System.out.println("ajaaaaj");
             return null;
@@ -55,6 +71,7 @@ public class ClassDiagram extends Element {
         relationList.add(tmp);
         return tmp;
     }
+
 
     /*public UMLClassifier classifierForName(String name) {
         for (UMLClassifier umlClass : classList) {
@@ -72,8 +89,8 @@ public class ClassDiagram extends Element {
      * @param name nazov Class-y
      * @return najdena Class-a, pokial v diagrame neexistuje Class-a s danym nazvom vracia null
      */
-    public UMLClass findClass(String name) {
-        for (UMLClass umlClass : classList) {
+    public UMLClassifier findClass(String name) {
+        for (UMLClassifier umlClass : classList) {
             if (name.equals(umlClass.getName())) {
                 return umlClass;
             }
@@ -85,7 +102,7 @@ public class ClassDiagram extends Element {
      * Vracia nemodifikovatelny zoznam Class ktore sa nachadzaju v diagrame
      * @return nemodifikovatelny zoznam Class
      */
-    public List<UMLClass> getClassList() {
+    public List<UMLClassifier> getClassList() {
         return Collections.unmodifiableList(classList);
     }
 

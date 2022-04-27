@@ -1,12 +1,12 @@
 package back;
 
 /**
- * Trieda reprezentuje vztahy medzi jednotlivymi Class-ami v diagrame tried
+ * Trieda reprezentuje vztahy medzi jednotlivymi Class-ami a rozhraniami v diagrame tried
  * @author Viliam Holik
  */
 public class UMLRelation extends Element {
-    private final UMLClass firstClass;
-    private final UMLClass secondClass;
+    private final UMLClassifier firstClass;
+    private final UMLClassifier secondClass;
     private String relation;
 
     /**
@@ -16,7 +16,7 @@ public class UMLRelation extends Element {
      * @param secondC druha Class-a, ktora je vo vztahu
      * @param relation typ vztahu
      */
-    public UMLRelation(String name, UMLClass firstC, UMLClass secondC, String relation) {
+    public UMLRelation(String name, UMLClassifier firstC, UMLClassifier secondC, String relation) {
         super(name);
         firstClass = firstC;
         secondClass = secondC;
@@ -27,7 +27,7 @@ public class UMLRelation extends Element {
      * Funkcia vracia prvu Class-u vo vztahu
      * @return prva Class-a
      */
-    public UMLClass getFirstClass() {
+    public UMLClassifier getFirstClass() {
         return firstClass;
     }
 
@@ -35,7 +35,7 @@ public class UMLRelation extends Element {
      * Funkcia vracia druhu Class-u vo vztahu
      * @return druha Class-a
      */
-    public UMLClass getSecondClass() {
+    public UMLClassifier getSecondClass() {
         return secondClass;
     }
 

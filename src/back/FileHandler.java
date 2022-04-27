@@ -16,6 +16,7 @@ public class FileHandler {
     private int classType;  // 1=class diagram, 2=sequence diagram
     private ClassDiagram classd;
     private UMLClass umlClass;
+    private UMLInterface umlInterface;
 
     /**
      * Vytvori objekt pre pracu so suborom
@@ -39,21 +40,41 @@ public class FileHandler {
         }
         System.out.println("ClassDiagram - " + classd.getName());
         classd.getClassList().forEach( (n) -> {
-            System.out.println("Class " + n.getName());
-            n.getAttributes().forEach( (a) -> {
-                String type = a.getType().getName();
-                System.out.println(type + ":" + a.getName());
-            });
-            n.getOperations().forEach( (o) -> {
-                String type = o.getType().getName();
-                System.out.println("operation " + type + ":" + o.getName());
-                System.out.println("params {");
-                o.getArguments().forEach( (a) -> {
-                    String type1 = a.getType().getName();
-                    System.out.println(type1 + ":" + a.getName());
+            if(n instanceof UMLClass) {
+                System.out.println("Class " + n.getName());
+                UMLClass uc = (UMLClass)n;
+                uc.getAttributes().forEach( (a) -> {
+                    String type = a.getType().getName();
+                    System.out.println(type + ":" + a.getName());
                 });
-                System.out.println("}");
-            });
+                uc.getOperations().forEach( (o) -> {
+                    String type = o.getType().getName();
+                    System.out.println("operation " + type + ":" + o.getName());
+                    System.out.println("params {");
+                    o.getArguments().forEach( (a) -> {
+                        String type1 = a.getType().getName();
+                        System.out.println(type1 + ":" + a.getName());
+                    });
+                    System.out.println("}");
+                });
+            }else {
+                System.out.println("Interface " + n.getName());
+                UMLInterface ui = (UMLInterface) n;
+                ui.getAttributes().forEach((a) -> {
+                    String type = a.getType().getName();
+                    System.out.println(type + ":" + a.getName());
+                });
+                ui.getOperations().forEach( (o) -> {
+                    String type = o.getType().getName();
+                    System.out.println("operation " + type + ":" + o.getName());
+                    System.out.println("params {");
+                    o.getArguments().forEach( (a) -> {
+                        String type1 = a.getType().getName();
+                        System.out.println(type1 + ":" + a.getName());
+                    });
+                    System.out.println("}");
+                });
+            }
         });
         classd.getRelationList().forEach( (n) -> System.out.println(n.getFirstClass().getName() + " : " + n.getRelation() + " : " + n.getSecondClass().getName() + " : " + n.getName()));
 //        System.out.println(Arrays.toString(classd.getClassList()));
@@ -92,6 +113,9 @@ public class FileHandler {
             case "Class":
                 ClassHandle(words);
                 break;
+            case "Interface":
+                InterfaceHandle(words);
+                break;
             default:
                 if (words[0].matches("^[-+#~].*")) {
                     AttrHandle(words);
@@ -125,7 +149,12 @@ public class FileHandler {
      */
     private void AttrHandle(String[] words) {
         UMLAttribute ua = new UMLAttribute(words[1], new UMLClassifier(words[0]));
-        umlClass.addAttribute(ua);
+        if(umlClass != null) {
+            umlClass.addAttribute(ua);
+        }
+        if(umlInterface != null) {
+            umlInterface.addAttribute(ua);
+        }
     }
 
     /**
@@ -143,7 +172,12 @@ public class FileHandler {
                 FuncParamHandle(words, uo);
             }
         }
-        umlClass.addOperation(uo);
+        if(umlClass != null) {
+            umlClass.addOperation(uo);
+        }
+        if(umlInterface != null) {
+            umlInterface.addOperation(uo);
+        }
     }
 
     /**
@@ -169,6 +203,14 @@ public class FileHandler {
         UMLRelation ur = classd.createRelation(relation[3], relation[0], relation[2], relation[1]);
         if (ur == null) {
             System.out.println("chyba pri relacii");
+        }
+    }
+
+    private void InterfaceHandle(String[] words) {
+        UMLInterface anInterface = classd.createInterface(words[1]);
+        umlInterface = null;
+        if (words.length == 3 && Objects.equals(words[2], "{")) {
+            umlInterface = anInterface;
         }
     }
 }
