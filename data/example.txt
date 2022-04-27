@@ -3,7 +3,9 @@
 Class Student {
 -String id
 -String name
-operation +String name()
+operation +String name(String a, int b, char c)
+operation +String nameo(String a, cr c)
+operation +String namepes()
 }
 Class Flash
 Class Question {
