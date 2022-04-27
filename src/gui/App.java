@@ -33,6 +33,8 @@ public class App extends Application {
 
     private static Scene scene;
     public ClassDiagram classd;
+    private double startDragX;
+    private double startDragY;
 
     @Override
     public void start(Stage stage) {
@@ -116,8 +118,7 @@ public class App extends Application {
 
         //StackPane stack = new StackPane();
 
-        Pane pane = new Pane();
-
+        Pane rootpane = new Pane();
 
         ///menuBar.setLayoutX(100);
         //menuBar.setLayoutY(100);
@@ -126,7 +127,12 @@ public class App extends Application {
 
         //menuBar.relocate().bind(pane.widthProperty());
 
-        pane.getChildren().addAll(menuBar);
+        BorderPane menubarpane = new BorderPane();
+        menubarpane.setTop(menuBar);
+        rootpane.getChildren().add(menubarpane);
+
+
+        //rootpane.getChildren().addAll(menuBar);
 
         FileChooser fc = new FileChooser();
         fc.setInitialDirectory(new File(System.getProperty("user.dir"), "data"));
@@ -136,11 +142,11 @@ public class App extends Application {
             FileHandler fh = new FileHandler(path);
             fh.read();
             classd = fh.getClassDiagram();
-            pane.getChildren().clear();
-            pane.getChildren().add(menuBar);
+           // rootpane.getChildren().clear();
+         //   rootpane.getChildren().add(menuBar);
 
             //maxLeght(0,classd);
-            drawTable(pane, 0, classd);
+            drawTable(rootpane, 1, classd);
 
             //System.out.println("The size of the ArrayList is: " + classd.getClassList().size());
 
@@ -156,14 +162,13 @@ public class App extends Application {
 
         });
 
-        Scene scene = new Scene(pane, 600, 600);
+        Scene scene = new Scene(rootpane, 600, 600);
         scene.getStylesheets().add("css.css");
 
         stage.setScene(scene);
         stage.show();
 
         ChangeListener stageSizeListener = (observable, oldValue, newValue) -> {
-
 
             System.out.println("Height: " + stage.getHeight() + " Width: " + stage.getWidth());
             menuBar.relocate(stage.getWidth() - 600, stage.getHeight() - 600);
@@ -174,6 +179,8 @@ public class App extends Application {
 
         //menuBar.widthProperty().addListener(stageSizeListener);
         //menuBar.heightProperty().addListener(stageSizeListener);
+
+
 
 
     }
@@ -227,12 +234,25 @@ public class App extends Application {
     }
 
 
-    public static void drawTable(Pane pane, int classcount, ClassDiagram classd) {
+    public static void drawTable(Pane rootpane, int classcount, ClassDiagram classd) {
+        Pane table = new Pane();
         String className = classd.getClassList().get(classcount).getName();
         int maxLenght = maxLeght(classcount, classd).intValue();
+        if (maxLenght < 10)
+        {
+            maxLenght = 10;
+        }
 
         int attrCount = classd.getClassList().get(classcount).getAttributes().size();
+        if (attrCount == 0)
+        {
+            attrCount=1;
+        }
         int operCount = classd.getClassList().get(classcount).getOperations().size();
+        if (operCount == 0)
+        {
+            operCount = 1;
+        }
         int totalCount = attrCount + operCount;
         //System.out.println("Maxleghth classcountu " + classcount +" je: "+ maxLenght);
         Region rect = new Region(); //instantiating Rectangle
@@ -262,8 +282,12 @@ public class App extends Application {
         line2.setStartY(startY + 30 + attrCount * 20); //setting starting Y point of Line
         line2.setEndX(startX + maxLenght * 10); //setting ending X point of Line
         line2.setEndY(startY + 30 + attrCount * 20); //setting ending Y point of Line
+        int newlinesadded=0;
 
         System.out.println("attrcount je " + attrCount);
+
+        if (classd.getClassList().get(classcount).getAttributes().size() > 0 || classd.getClassList().get(classcount).getOperations().size() > 0 )
+        {
 
         Pane attributes = new Pane();
         Pane operations = new Pane();
@@ -293,7 +317,7 @@ public class App extends Application {
             //pane.getChildren().addAll(text);
         }
 
-        int newlinesadded=0;
+
 
         //pane.getChildren().addAll(rect,line,line2,classname,attributes);
         //line,line2,classname,attributes
@@ -368,6 +392,8 @@ public class App extends Application {
 
         }
 
+
+
         //classd.getClassList().get(0).getOperations().get(i).getArguments().forEach( (a) ->
         //{
         //params.add(a.getType().getName() + ":" + a.getName());
@@ -417,23 +443,36 @@ public class App extends Application {
 
     //pane.getChildren().addAll(rect,line,line2,classname,attributes);
 
-        pane.getChildren().add(0,operations);
-        pane.getChildren().add(0,attributes);
-        pane.getChildren().add(0,classname);
-        pane.getChildren().add(0,line2);
-        pane.getChildren().add(0,line);
+        table.getChildren().add(0,operations);
+        table.getChildren().add(0,attributes);
+
+            /*pane.setOnMousePressed(e -> {
+                startDragX = e.getSceneX();
+                startDragY = e.getSceneY();
+            });
+
+            pane.setOnMouseDragged(e -> {
+                pane.setTranslateX(e.getSceneX() - startDragX);
+                pane.setTranslateY(e.getSceneY() - startDragY);
+            });*/
+
+        }
+        table.getChildren().add(0,classname);
+        table.getChildren().add(0,line2);
+        table.getChildren().add(0,line);
 
         rect.setPrefHeight(30 + 20 * (totalCount+newlinesadded)); // setting the height of rectangle
         //System.out.println("totalY je " + (startY + 30 + 20 * (totalCount+newlinesadded)));
         //System.out.println("totalcount je " + totalCount);
        // System.out.println("newlinesadded " + newlinesadded);
 
-        pane.getChildren().add(0,rect);
+        table.getChildren().add(0,rect);
 
-        pane.setOnMouseClicked((MouseEvent event) -> {
-            System.out.println("mouseClicked");
-        });
- //comment
+        rootpane.getChildren().add(table);
+
+        //pane.setOnMouseClicked((MouseEvent event) -> {
+         //   System.out.println("mouseClicked");
+       // });
 
     //line,line2,classname,attributes
 
