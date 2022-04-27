@@ -200,7 +200,12 @@ public class FileHandler {
      */
     private void RelationHandle(String line) {
         String[] relation = line.split("\\s*:\\s*");
-        UMLRelation ur = classd.createRelation(relation[3], relation[0], relation[2], relation[1]);
+        UMLRelation ur;
+        if(relation.length == 3) {
+            ur = classd.createRelation("", relation[0], relation[2], relation[1]);
+        } else {
+            ur = classd.createRelation(relation[3], relation[0], relation[2], relation[1]);
+        }
         if (ur == null) {
             System.out.println("chyba pri relacii");
         }
