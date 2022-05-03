@@ -8,8 +8,8 @@ import java.util.List;
  * @author Viliam Holik
  */
 public class UMLInterface extends UMLClassifier {
-    List<UMLAttribute> attrArray = new ArrayList<>();
-    List<UMLOperation> operArray = new ArrayList<>();
+    private List<UMLAttribute> attrArray = new ArrayList<>();
+    private List<UMLOperation> operArray = new ArrayList<>();
 
     public UMLInterface(String name) {
         super(name);

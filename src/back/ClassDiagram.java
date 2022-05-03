@@ -90,6 +90,7 @@ public class ClassDiagram extends Element {
      * @return najdena Class-a, pokial v diagrame neexistuje Class-a s danym nazvom vracia null
      */
     public UMLClassifier findClass(String name) {
+        if (name == null) return null;
         for (UMLClassifier umlClass : classList) {
             if (name.equals(umlClass.getName())) {
                 return umlClass;

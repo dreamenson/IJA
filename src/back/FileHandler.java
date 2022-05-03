@@ -3,7 +3,7 @@ package back;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,6 +17,8 @@ public class FileHandler {
     private ClassDiagram classd;
     private UMLClass umlClass;
     private UMLInterface umlInterface;
+    private List<SequenceDiagram> sqlist= new ArrayList<>();
+    private SequenceDiagram activeSq;
 
     /**
      * Vytvori objekt pre pracu so suborom
@@ -77,7 +79,22 @@ public class FileHandler {
             }
         });
         classd.getRelationList().forEach( (n) -> System.out.println(n.getFirstClass().getName() + " : " + n.getRelation() + " : " + n.getSecondClass().getName() + " : " + n.getName()));
-//        System.out.println(Arrays.toString(classd.getClassList()));
+        sqlist.forEach( (n) -> {
+            System.out.println("\nSequence " + n.getName());
+            n.getParticipantList().forEach( (a) -> {
+                System.out.println("Participant " + a.getName());
+            });
+            n.getMessageList().forEach( (a) -> {
+                int type = a.getType();
+                if (type == 1) {
+                    System.out.println("activate " + a.getFirstClass().getName());
+                } else if (type == 2) {
+                    System.out.println("deactivate " + a.getFirstClass().getName());
+                } else {
+                    System.out.println(a.getFirstClass().getName() + " : 3 : " + a.getSecondClass().getName() + " " + a.getName());
+                }
+            });
+        });
     }
 
     /**
@@ -93,6 +110,7 @@ public class FileHandler {
      * @param line riadok zo vstupneho suboru
      */
     private void parseLine(String line) {
+        System.out.println(line);
         String[] words = line.split("\\s+");
         switch (words[0]) {
             case "@startclass":
@@ -105,28 +123,62 @@ public class FileHandler {
                 if (classType == 1) classType = 0;
                 break;
             case "@startsq":
-                if (classType == 0) classType = 2;
+                if (classType == 0) {
+                    classType = 2;
+                    if (classd != null) {
+                        activeSq = new SequenceDiagram(words[1], classd);
+                        sqlist.add(activeSq);
+                    }
+                }
                 break;
             case "@endsq":
-                if (classType == 2) classType = 0;
+                if (classType == 2) {
+                    classType = 0;
+                    activeSq = null;
+                }
                 break;
             case "Class":
-                ClassHandle(words);
+                if (classType == 1) {
+                    ClassHandle(words);
+                }
                 break;
             case "Interface":
-                InterfaceHandle(words);
+                if (classType == 1) {
+                    InterfaceHandle(words);
+                }
+                break;
+            case "Participant":
+                if (classType == 2) {
+                    participeSQ(words);
+                }
+                break;
+            case "activate":
+                if (classType == 2) {
+                    activeSq.addMessage(words[0], 1, words[1], null);
+                }
+                break;
+            case "deactivate":
+                if (classType == 2) {
+                    activeSq.addMessage(words[0], 2, words[1], null);
+                }
                 break;
             default:
-                if (words[0].matches("^[-+#~].*")) {
-                    AttrHandle(words);
-                    break;
-                }
-                if (words[0].equals("operation")) {
-                    FuncHandle(words);
-                    break;
-                }
-                if (words[0].matches("[A-Za-z].*")) {
-                    RelationHandle(line);
+                if (classType == 1) {
+                    if (words[0].matches("^[-+#~].*")) {
+                        AttrHandle(words);
+                        break;
+                    }
+                    if (words[0].equals("operation")) {
+                        FuncHandle(words);
+                        break;
+                    }
+                    if (words[0].matches("[A-Za-z].*")) {
+                        RelationHandle(line);
+                    }
+                } else if (classType == 2) {
+                    if (words[0].matches("[A-Za-z].*")) {
+                        MessageHandle(words);
+                    }
                 }
         }
     }
@@ -217,5 +269,14 @@ public class FileHandler {
         if (words.length == 3 && Objects.equals(words[2], "{")) {
             umlInterface = anInterface;
         }
+    }
+
+    private void participeSQ(String[] words) {
+        UMLClass umlClass = (UMLClass) classd.findClass(words[1]);
+        activeSq.addParticipant(umlClass);
+    }
+
+    private void MessageHandle(String[] words) {
+        activeSq.addMessage(words[3], 3, words[0], words[2]);
     }
 }
