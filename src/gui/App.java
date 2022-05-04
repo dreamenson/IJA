@@ -145,20 +145,11 @@ public class App extends Application {
             // rootpane.getChildren().clear();
             //   rootpane.getChildren().add(menuBar);
 
-            //maxLeght(0,classd);
-            //  drawTable(rootpane, 1, classd);
+            maxLeght(0,classd);
+            drawTable(rootpane, 0, classd);
 
             //System.out.println("The size of the ArrayList is: " + classd.getClassList().size());
 
-
-         /*   classd.getClassList().forEach((n) ->
-            {
-                //System.out.println("Pes " + n.getName());
-                Text text = new Text(n.getName());
-                text.setX(111);
-                text.setY(50);
-                //stack.getChildren().addAll(text);
-            });*/
 
         });
 
@@ -186,8 +177,16 @@ public class App extends Application {
     public static void main() {
         launch();
     }
-}
-/*
+
+   /* public static UMLClass getType(int classcount, ClassDiagram classd)
+    {
+
+        if(classd.getClassList().get(classcount) instanceof UMLClass) {
+            return UMLClass
+        }
+    }*/
+
+
     public static AtomicInteger maxLeght(int classcount, ClassDiagram classd) {
         System.out.println("vosiel som do cyklusu");
         //cyklus na zistenie najdlhsej veci z tabulky
@@ -200,11 +199,15 @@ public class App extends Application {
 
         //System.out.println("Class for test is: " + classd.getClassList().get(classcount).getName());
 
-        if (classd.getClassList().get(classcount).getName().length() > maxLenght.get()) {
-            maxLenght.set(classd.getClassList().get(classcount).getName().length());
+        if (((UMLClass)classd.getClassList().get(classcount)).getName().length() > maxLenght.get())
+        {
+            maxLenght.set(((UMLClass)classd.getClassList().get(classcount)).getName().length());
         }
 
-        classd.getClassList().get(classcount).getAttributes().forEach((a) ->
+        if(classd.getClassList().get(classcount) instanceof UMLClass) {
+            UMLClass uc = (UMLClass) classd.getClassList().get(classcount);
+
+        uc.getAttributes().forEach((a) ->
         {
             String tmp = a.getType().getName() + ":" + a.getName();
             if (tmp.length() > maxLenght.get()) {
@@ -212,7 +215,9 @@ public class App extends Application {
             }
         });
 
-        classd.getClassList().get(classcount).getOperations().forEach((o) ->
+        }
+
+        ((UMLClass)classd.getClassList().get(classcount)).getOperations().forEach((o) ->
         {
             String tmp = o.getType().getName() + ":" + o.getName() +"()";
             if (tmp.length() > maxLenght.get()) {
@@ -236,18 +241,19 @@ public class App extends Application {
     public static void drawTable(Pane rootpane, int classcount, ClassDiagram classd) {
         Pane table = new Pane();
         String className = classd.getClassList().get(classcount).getName();
+        System.out.println("Classname je " + className);
         int maxLenght = maxLeght(classcount, classd).intValue();
         if (maxLenght < 10)
         {
             maxLenght = 10;
         }
 
-        int attrCount = classd.getClassList().get(classcount).getAttributes().size();
+        int attrCount = ((UMLClass)classd.getClassList().get(classcount)).getAttributes().size();
         if (attrCount == 0)
         {
             attrCount=1;
         }
-        int operCount = classd.getClassList().get(classcount).getOperations().size();
+        int operCount = ((UMLClass)classd.getClassList().get(classcount)).getOperations().size();
         if (operCount == 0)
         {
             operCount = 1;
@@ -285,7 +291,7 @@ public class App extends Application {
 
         System.out.println("attrcount je " + attrCount);
 
-        if (classd.getClassList().get(classcount).getAttributes().size() > 0 || classd.getClassList().get(classcount).getOperations().size() > 0 )
+        if (((UMLClass)classd.getClassList().get(classcount)).getAttributes().size() > 0 || ((UMLClass)classd.getClassList().get(classcount)).getOperations().size() > 0 )
         {
 
         Pane attributes = new Pane();
@@ -301,7 +307,7 @@ public class App extends Application {
             // System.out.println(type + ":" + a.getName());
 
             Text text = new Text();
-            text.setText(classd.getClassList().get(0).getAttributes().get(i).getType().getName() + ":" + classd.getClassList().get(0).getAttributes().get(i).getName());
+            text.setText(((UMLClass)classd.getClassList().get(0)).getAttributes().get(i).getType().getName() + ":" + ((UMLClass)classd.getClassList().get(0)).getAttributes().get(i).getName());
             //System.out.println(classd.getClassList().get(0).getAttributes().get(i).getType().getName() + ":" + classd.getClassList().get(0).getAttributes().get(i).getName() );
             text.setStyle("-fx-font-size: 15;-fx-font-weight: normal;");
             text.setX(startX + 2);
@@ -335,8 +341,8 @@ public class App extends Application {
         Text text = new Text();
         String params = new String();
         String textonnewline = new String();
-        String name = classd.getClassList().get(0).getOperations().get(i).getType().getName() + ":" + classd.getClassList().get(0).getOperations().get(i).getName() +"(";
-        int paramscount= classd.getClassList().get(0).getOperations().get(i).getArguments().size();
+        String name = ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getType().getName() + ":" + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getName() +"(";
+        int paramscount= ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().size();
         if (paramscount==0)
         {
             params = ")";
@@ -352,30 +358,30 @@ public class App extends Application {
             //System.out.println("cyklus prebieha pre opercount " + i + " paramscount " + m);
             if (m==0)
             {
-                if ((classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getName() +"(").length() *10 + name.length() * 10 > maxLenght * 10 )
+                if ((((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getName() +"(").length() *10 + name.length() * 10 > maxLenght * 10 )
                 {
-                    params = params + "\n" + classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getName() +",";
+                    params = params + "\n" + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getName() +",";
                     newlinesadded = newlinesadded+1;
-                    textonnewline = classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getName() +",";
+                    textonnewline = ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getName() +",";
                 }
                 else
                 {
-                    params = params + classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getName() +",";
+                    params = params + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getName() +",";
                 }
             }
             else
             {
 
-                if (textonnewline.length()*10 + (classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getName() +",").length()*10 > maxLenght * 10)
+                if (textonnewline.length()*10 + (((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getName() +",").length()*10 > maxLenght * 10)
                 {
-                    params = params + "\n" + classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getName() +",";
+                    params = params + "\n" + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getName() +",";
                     newlinesadded = newlinesadded+1;
-                    textonnewline = classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getName() +",";
+                    textonnewline = ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getName() +",";
                 }
                 else
                 {
-                    params = params + classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getName() +",";
-                    textonnewline = classd.getClassList().get(0).getOperations().get(i).getArguments().get(m-1).getType().getName() + ":" + classd.getClassList().get(0).getOperations().get(i).getArguments().get(m-1).getName() + "," + classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + classd.getClassList().get(0).getOperations().get(i).getArguments().get(m).getName() +",";
+                    params = params + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getName() +",";
+                    textonnewline = ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m-1).getType().getName() + ":" + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m-1).getName() + "," + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getType().getName() + ":" + ((UMLClass)classd.getClassList().get(0)).getOperations().get(i).getArguments().get(m).getName() +",";
                 }
 
             }
@@ -454,7 +460,7 @@ public class App extends Application {
                 pane.setTranslateX(e.getSceneX() - startDragX);
                 pane.setTranslateY(e.getSceneY() - startDragY);
             });*/
-/*
+
         }
         table.getChildren().add(0,classname);
         table.getChildren().add(0,line2);
@@ -478,4 +484,3 @@ public class App extends Application {
 }
 
 }
-*/
