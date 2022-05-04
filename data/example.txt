@@ -25,3 +25,21 @@ Flash : 1 o-- 1 :Answer : has
 Answer:1 *-- 1: Student : has
 
 @endclass
+
+@startsq test
+
+Participant Flash
+Participant Question
+Participant Answer
+
+activate Flash
+Flash -- Flash akjsbf
+activate Question
+Flash - Question move()
+Question - Question ask()
+activate Answer
+deactivate Flash
+deactivate Question
+deactivate Answer
+
+@endsq
