@@ -17,7 +17,7 @@ public class FileHandler {
     private ClassDiagram classd;
     private UMLClass umlClass;
     private UMLInterface umlInterface;
-    private List<SequenceDiagram> sqlist= new ArrayList<>();
+    private final List<SequenceDiagram> sqlist= new ArrayList<>();
     private SequenceDiagram activeSq;
 
     /**
@@ -78,7 +78,7 @@ public class FileHandler {
                 });
             }
         });
-        classd.getRelationList().forEach( (n) -> System.out.println(n.getFirstClass().getName() + " : " + n.getRelation() + " : " + n.getSecondClass().getName() + " : " + n.getName()));
+        classd.getRelationList().forEach( (n) -> System.out.println(n.getFirstClass().getName() + " : " + n.getRelation() + " : " + n.getSecondClass().getName()));
         sqlist.forEach( (n) -> {
             System.out.println("\nSequence " + n.getName());
             n.getParticipantList().forEach( (a) -> {
@@ -110,7 +110,7 @@ public class FileHandler {
      * @param line riadok zo vstupneho suboru
      */
     private void parseLine(String line) {
-        System.out.println(line);
+//        System.out.println(line);
         String[] words = line.split("\\s+");
         switch (words[0]) {
             case "@startclass":
@@ -150,6 +150,11 @@ public class FileHandler {
             case "Participant":
                 if (classType == 2) {
                     participeSQ(words);
+                }
+                break;
+            case "Main":
+                if (classType == 2) {
+                    activeSq.addMain(words[1]);
                 }
                 break;
             case "activate":
@@ -252,12 +257,26 @@ public class FileHandler {
      */
     private void RelationHandle(String line) {
         String[] relation = line.split("\\s*:\\s*");
-        UMLRelation ur;
-        if(relation.length == 3) {
-            ur = classd.createRelation("", relation[0], relation[2], relation[1]);
-        } else {
-            ur = classd.createRelation(relation[3], relation[0], relation[2], relation[1]);
+        int type;
+
+        switch (relation[1]) {
+            case "generalize":
+                type = 1;
+                break;
+            case "associate":
+                type = 2;
+                break;
+            case "agregate":
+                type = 3;
+                break;
+            case "composite":
+                type = 4;
+                break;
+            default:
+                type = 1;
         }
+
+        UMLRelation ur = classd.createRelation(relation[0], relation[2], type);
         if (ur == null) {
             System.out.println("chyba pri relacii");
         }
