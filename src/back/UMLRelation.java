@@ -4,20 +4,18 @@ package back;
  * Trieda reprezentuje vztahy medzi jednotlivymi Class-ami a rozhraniami v diagrame tried
  * @author Viliam Holik
  */
-public class UMLRelation extends Element {
+public class UMLRelation {
     private final UMLClassifier firstClass;
     private final UMLClassifier secondClass;
-    private String relation;
+    private int relation; // 1-generalizacia, 2-asociacia, 3-agregacia, 4-kompozicia
 
     /**
      * Konstruktor pre vytvorenie vztahu medzi 2 Class-ami
-     * @param name nazov vztahu
      * @param firstC prva Class-a, ktora je vo vztahu
      * @param secondC druha Class-a, ktora je vo vztahu
      * @param relation typ vztahu
      */
-    public UMLRelation(String name, UMLClassifier firstC, UMLClassifier secondC, String relation) {
-        super(name);
+    public UMLRelation(UMLClassifier firstC, UMLClassifier secondC, int relation) {
         firstClass = firstC;
         secondClass = secondC;
         this.relation = relation;
@@ -43,7 +41,7 @@ public class UMLRelation extends Element {
      * Funkcia vracia nazov vztahu
      * @return nazov vztahu
      */
-    public String getRelation() {
+    public int getRelation() {
         return relation;
     }
 
@@ -51,7 +49,7 @@ public class UMLRelation extends Element {
      * Funkcia na zmenu typu relacie
      * @param relation typ relacie
      */
-    public void changeRelation(String relation) {
+    public void changeRelation(int relation) {
         this.relation = relation;
     }
 }

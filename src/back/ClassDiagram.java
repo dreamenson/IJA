@@ -54,20 +54,19 @@ public class ClassDiagram extends Element {
 
     /**
      * Vytvori instanciu triedy UMLRelation a vlozi ju do diagramu. Pokial sa tam uz nachadza relacia s rovnakym nazvom, neurobi nic
-     * @param name nazov vztahu
      * @param firstC prva Class-a, ktora je vo vztahu
      * @param secondC druha Class-a, ktora je vo vztahu
      * @param relation typ vztahu
      * @return instancia vytvorenej relacie, ak neexistuju zadane Class-y vracia null
      */
-    public UMLRelation createRelation(String name, String firstC, String secondC, String relation) {
+    public UMLRelation createRelation(String firstC, String secondC, int relation) {
         UMLClassifier first = findClass(firstC);
         UMLClassifier second = findClass(secondC);
         if(first == null || second == null){
             System.out.println("ajaaaaj");
             return null;
         }
-        UMLRelation tmp = new UMLRelation(name, first, second, relation);
+        UMLRelation tmp = new UMLRelation(first, second, relation);
         relationList.add(tmp);
         return tmp;
     }

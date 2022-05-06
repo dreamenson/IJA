@@ -11,6 +11,7 @@ import java.util.List;
 public class SequenceDiagram extends Element {
     private List<UMLClass> participants = new ArrayList<>();
     private List<UMLMessage> messageList = new ArrayList<>();
+    private String main;
     private ClassDiagram classd;
 
     public SequenceDiagram(String name, ClassDiagram classDiagram) {
@@ -29,6 +30,10 @@ public class SequenceDiagram extends Element {
             }
         }
         return participants.add(umlClass);
+    }
+
+    public void addMain(String name) {
+        main = name;
     }
 
     public boolean addMessage(String name, int type, String first, String second) {

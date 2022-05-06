@@ -1,0 +1,47 @@
+@startclass uml
+
+Class Element {
++String name
+operation +void Element(String name)
+operation +String getName()
+operation +void rename(String name)
+}
+Class UMLClassifier {
+operation +void UMLClassifier(String name)
+operation +boolean isUserDefined()
+}
+Class UMLClass {
++List<UMLAttribute> attributes
+operation +boolean addAttribute(UMLAttribute attr)
+operation +int getAttrPosition(UMLAttribute attr)
+}
+Class UMLAttribute {
++UMLClassifier type
+operation +UMLClassifier getType()
+}
+Class ClassDiagram {
++List<UMLClassifier> classes
+operation +UMLClass createClass(String name)
+operation +UMLClassifier classifierForName(String name)
+}
+
+Element : generalize : UMLClassifier
+Element : generalize : ClassDiagram
+Element : generalize : UMLAttribute
+UMLClassifier : generalize : UMLClass
+UMLClassifier : associate : UMLAttribute
+UMLAttribute : associate : UMLClass
+ClassDiagram : associate : ClassDiagram
+
+@endclass
+
+@startsq 1
+
+Main Main
+Participant ClassDiagram
+Participant UMLClass c1
+Participant UMLAttribute a1
+
+
+
+@endsq
