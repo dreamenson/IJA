@@ -106,6 +106,14 @@ public class FileHandler {
     }
 
     /**
+     * Vracia zoznam prvkov sekvencneho diagramu
+     * @return zoznam prvkov sekvencneho diagramu
+     */
+    public List<SequenceDiagram> getSequenceDiagram() {
+        return sqlist;
+    }
+
+    /**
      * Funkcia parsuje riadok
      * @param line riadok zo vstupneho suboru
      */
