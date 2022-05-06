@@ -6,6 +6,8 @@ import back.*;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
+import javafx.scene.*;
+import javafx.scene.control.*;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -19,6 +21,10 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.event.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 
 import java.io.File;
@@ -33,8 +39,10 @@ public class App extends Application {
 
     private static Scene scene;
     public ClassDiagram classd;
-    private double startDragX;
-    private double startDragY;
+    public List<SequenceDiagram> sqlist;
+    //public List<SequenceDiagram> sqlist;
+    //private double startDragX;
+   // private double startDragY;
 
     @Override
     public void start(Stage stage) {
@@ -62,6 +70,8 @@ public class App extends Application {
         Menu insertMenu = new Menu("Insert");
         Menu helpMenu = new Menu("Help");
         Menu exitMenu = new Menu("Exit");
+        Menu blankMenu = new Menu("                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ");
+        blankMenu.setDisable(true);
 
         // Create MenuItems
         MenuItem newFile = new MenuItem("New file");
@@ -103,7 +113,7 @@ public class App extends Application {
         insertMenu.getItems().addAll(newClass, AssocationRelationship, GeneralizationRelationship, InheritanceRelationship, RealizationRelationship, AggregationRelationship, CompositionRelationship);
 
         // Add Menus to the MenuBar
-        menuBar.getMenus().addAll(fileMenu, editMenu, insertMenu, helpMenu, exitMenu);
+        menuBar.getMenus().addAll(fileMenu, editMenu, insertMenu, helpMenu, exitMenu,blankMenu);
 
         //classd.getClassList().forEach( (n) -> {
         //    //Text text = new Text(n.getName());
@@ -142,11 +152,13 @@ public class App extends Application {
             FileHandler fh = new FileHandler(path);
             fh.read();
             classd = fh.getClassDiagram();
+            sqlist = fh.getSequenceDiagram();
             // rootpane.getChildren().clear();
             //   rootpane.getChildren().add(menuBar);
 
             maxLeght(0,classd);
-            drawTable(rootpane, 0, classd);
+            drawSeq(stage,rootpane,sqlist);
+            //drawTable(rootpane, 0, classd);
 
             //System.out.println("The size of the ArrayList is: " + classd.getClassList().size());
 
@@ -178,17 +190,8 @@ public class App extends Application {
         launch();
     }
 
-   /* public static UMLClass getType(int classcount, ClassDiagram classd)
-    {
-
-        if(classd.getClassList().get(classcount) instanceof UMLClass) {
-            return UMLClass
-        }
-    }*/
-
-
     public static AtomicInteger maxLeght(int classcount, ClassDiagram classd) {
-        System.out.println("vosiel som do cyklusu");
+        //System.out.println("vosiel som do cyklusu");
         //cyklus na zistenie najdlhsej veci z tabulky
 
         String name = classd.getClassList().get(classcount).toString();
@@ -197,6 +200,9 @@ public class App extends Application {
 
         AtomicInteger maxLenght = new AtomicInteger(0);
 
+        if (classd.getClassList().get(classcount) instanceof UMLClass)
+        {
+
         //System.out.println("Class for test is: " + classd.getClassList().get(classcount).getName());
 
         if (((UMLClass)classd.getClassList().get(classcount)).getName().length() > maxLenght.get())
@@ -204,10 +210,8 @@ public class App extends Application {
             maxLenght.set(((UMLClass)classd.getClassList().get(classcount)).getName().length());
         }
 
-        if(classd.getClassList().get(classcount) instanceof UMLClass) {
-            UMLClass uc = (UMLClass) classd.getClassList().get(classcount);
 
-        uc.getAttributes().forEach((a) ->
+        ((UMLClass) classd.getClassList().get(classcount)).getAttributes().forEach((a) ->
         {
             String tmp = a.getType().getName() + ":" + a.getName();
             if (tmp.length() > maxLenght.get()) {
@@ -215,7 +219,6 @@ public class App extends Application {
             }
         });
 
-        }
 
         ((UMLClass)classd.getClassList().get(classcount)).getOperations().forEach((o) ->
         {
@@ -232,6 +235,43 @@ public class App extends Application {
 
             //maxLenght.set(0);
         });
+
+        }
+        if (classd.getClassList().get(classcount) instanceof UMLInterface)
+        {
+            if (((UMLInterface)classd.getClassList().get(classcount)).getName().length() > maxLenght.get())
+            {
+                maxLenght.set(((UMLInterface)classd.getClassList().get(classcount)).getName().length());
+            }
+
+
+            ((UMLInterface) classd.getClassList().get(classcount)).getAttributes().forEach((a) ->
+            {
+                String tmp = a.getType().getName() + ":" + a.getName();
+                if (tmp.length() > maxLenght.get()) {
+                    maxLenght.set(tmp.length());
+                }
+            });
+
+
+            ((UMLInterface)classd.getClassList().get(classcount)).getOperations().forEach((o) ->
+            {
+                String tmp = o.getType().getName() + ":" + o.getName() +"()";
+                if (tmp.length() > maxLenght.get()) {
+                    maxLenght.set(tmp.length());
+                }
+                o.getArguments().forEach((a) ->
+                {
+                    if (a.getType().getName().length() > maxLenght.get()) {
+                        maxLenght.set(a.getType().getName().length());
+                    }
+                });
+
+                //maxLenght.set(0);
+            });
+
+        }
+
         System.out.println("Maxleghth je: " + maxLenght);
 
         return maxLenght;
@@ -240,6 +280,8 @@ public class App extends Application {
 
     public static void drawTable(Pane rootpane, int classcount, ClassDiagram classd) {
         Pane table = new Pane();
+        int attrCount = 0;
+        int operCount = 0;
         String className = classd.getClassList().get(classcount).getName();
         System.out.println("Classname je " + className);
         int maxLenght = maxLeght(classcount, classd).intValue();
@@ -248,16 +290,34 @@ public class App extends Application {
             maxLenght = 10;
         }
 
-        int attrCount = ((UMLClass)classd.getClassList().get(classcount)).getAttributes().size();
-        if (attrCount == 0)
+        if (classd.getClassList().get(classcount) instanceof UMLClass )
         {
-            attrCount=1;
+            attrCount = ((UMLClass)classd.getClassList().get(classcount)).getAttributes().size();
+            if (attrCount == 0)
+            {
+                attrCount=1;
+            }
+            operCount = ((UMLClass)classd.getClassList().get(classcount)).getOperations().size();
+            if (operCount == 0)
+            {
+                operCount = 1;
+            }
         }
-        int operCount = ((UMLClass)classd.getClassList().get(classcount)).getOperations().size();
-        if (operCount == 0)
+
+        if (classd.getClassList().get(classcount) instanceof UMLInterface )
         {
-            operCount = 1;
+            attrCount = ((UMLInterface)classd.getClassList().get(classcount)).getAttributes().size();
+            if (attrCount == 0)
+            {
+                attrCount=1;
+            }
+            operCount = ((UMLInterface)classd.getClassList().get(classcount)).getOperations().size();
+            if (operCount == 0)
+            {
+                operCount = 1;
+            }
         }
+
         int totalCount = attrCount + operCount;
         //System.out.println("Maxleghth classcountu " + classcount +" je: "+ maxLenght);
         Region rect = new Region(); //instantiating Rectangle
@@ -289,7 +349,7 @@ public class App extends Application {
         line2.setEndY(startY + 30 + attrCount * 20); //setting ending Y point of Line
         int newlinesadded=0;
 
-        System.out.println("attrcount je " + attrCount);
+        //System.out.println("attrcount je " + attrCount);
 
         if (((UMLClass)classd.getClassList().get(classcount)).getAttributes().size() > 0 || ((UMLClass)classd.getClassList().get(classcount)).getOperations().size() > 0 )
         {
@@ -448,32 +508,46 @@ public class App extends Application {
 
     //pane.getChildren().addAll(rect,line,line2,classname,attributes);
 
-        table.getChildren().add(0,operations);
-        table.getChildren().add(0,attributes);
-
-            /*pane.setOnMousePressed(e -> {
-                startDragX = e.getSceneX();
-                startDragY = e.getSceneY();
-            });
-
-            pane.setOnMouseDragged(e -> {
-                pane.setTranslateX(e.getSceneX() - startDragX);
-                pane.setTranslateY(e.getSceneY() - startDragY);
-            });*/
+        table.getChildren().add(rect);
+        table.getChildren().add(line2);
+        table.getChildren().add(line);
+        table.getChildren().add(operations);
+        table.getChildren().add(attributes);
 
         }
-        table.getChildren().add(0,classname);
-        table.getChildren().add(0,line2);
-        table.getChildren().add(0,line);
+        table.getChildren().add(classname);
+
 
         rect.setPrefHeight(30 + 20 * (totalCount+newlinesadded)); // setting the height of rectangle
         //System.out.println("totalY je " + (startY + 30 + 20 * (totalCount+newlinesadded)));
         //System.out.println("totalcount je " + totalCount);
        // System.out.println("newlinesadded " + newlinesadded);
 
-        table.getChildren().add(0,rect);
+
 
         rootpane.getChildren().add(table);
+
+        AtomicInteger startDragX = new AtomicInteger();
+        AtomicInteger startDragY = new AtomicInteger();
+
+        table.setOnMousePressed(e -> {
+            startDragX.set ((int)e.getSceneX());
+            startDragY.set ((int)e.getSceneY());
+        });
+
+
+        table.setOnMouseDragged(e -> {
+            table.setTranslateX((int)e.getSceneX() - startDragX.get());
+            table.setTranslateY((int)e.getSceneY() - startDragY.get());
+        });
+
+       /* classname.setOnMousePressed(e -> {
+            table.getChildren().remove(classname);
+            classname.setText("Cauko");
+            table.getChildren().add(classname);
+
+        });*/
+
 
         //pane.setOnMouseClicked((MouseEvent event) -> {
          //   System.out.println("mouseClicked");
@@ -482,5 +556,213 @@ public class App extends Application {
     //line,line2,classname,attributes
 
 }
+
+    public static void drawSeq(Stage stage, Pane rootpane,List<SequenceDiagram> sqlist )
+    {
+        int AreaX = (int)stage.getWidth() - 50 ;
+        int AreaY = (int)stage.getWidth() - 50;
+        Pane diagram = new Pane();
+        int participantsCount = sqlist.get(0).getParticipantList().size();
+        int messageCount = sqlist.get(0).getMessageList().size();
+        //
+        //int participantsCount = 2;
+        int startX=0;
+        int startY=50;
+
+        int linelenght = AreaY-60-startY;
+        int Activate=0;
+        int Deactivate=0;
+
+        for (int i = 1; i <= participantsCount; i++)
+        {
+            //System.out.println("XXXXXXXXXXXXXX "+);
+            String participantname = sqlist.get(0).getParticipantList().get(i-1).getName();
+            if (participantsCount==1 && i==1)
+            {
+                startX = (AreaX/2)-(participantname.length()/2);
+            }
+            else if (participantsCount>1 && i==1)
+            {
+                startX = (int)stage.getWidth() - AreaX;
+            }
+            else if (participantsCount==2 && i==2)
+            {
+                startX = AreaX-(participantname.length() * 10);
+            }
+            else if (participantsCount>2 && i>1)
+            {
+                /*if (participantsCount==3 && i==3)
+                {
+                    startX = (AreaX/2)-(participantname.length()/2);
+                }*/
+                //if (participantsCount>2)
+               // {
+                    //startX = ((int)stage.getWidth() - AreaX + (sqlist.get(0).getParticipantList().get(0).getName().length())*10-(AreaX-(sqlist.get(0).getParticipantList().get(participantsCount-1).getName().length() * 10)))
+               // (sqlist.get(0).getParticipantList().get(0).getName().length()*10)
+                    startX = (sqlist.get(0).getParticipantList().get(0).getName().length()*10)+(AreaX / participantsCount)*(i-1);
+              //  }
+              //  startX = AreaX-(participantname.length() * 10);
+            }
+            /*else if (participantsCount>2 && i==participantsCount)
+            {
+                startX = AreaX-(participantname.length() * 10);
+            }*/
+            Region UpperRect = new Region(); //instantiating Rectangle
+            UpperRect.setLayoutX(startX); //setting the X coordinate of upper left //corner of rectangle
+            UpperRect.setLayoutY(startY); //setting the Y coordinate of upper left //corner of rectangle
+            UpperRect.setPrefWidth(participantname.length() * 10); //setting the width of rectangle
+            UpperRect.setPrefHeight(30); //setting the width of rectangle
+
+            Text Upperparticipantnametext = new Text(participantname);
+            Upperparticipantnametext.setStyle("-fx-font-size: 15;-fx-font-weight: bold;");
+            Upperparticipantnametext.setX(5+startX);
+            Upperparticipantnametext.setY(70);
+
+            Line line = new Line(); //instantiating Line class
+            line.setStartX(startX+(participantname.length() * 10/2)); //setting starting X point of Line
+            line.setStartY(startY + 30); //setting starting Y point of Line
+            line.setEndX(startX+(participantname.length() * 10/2)); //setting ending X point of Line
+            line.setEndY(AreaY-30); //setting ending Y point of Line
+
+            Region BottomRect = new Region(); //instantiating Rectangle
+            BottomRect.setLayoutX(startX); //setting the X coordinate of upper left //corner of rectangle
+            BottomRect.setLayoutY(AreaY-30); //setting the Y coordinate of upper left //corner of rectangle
+            BottomRect.setPrefWidth(participantname.length() * 10); //setting the width of rectangle
+            BottomRect.setPrefHeight(30); //setting the width of rectangle
+
+            Text Bottomparticipantnametext = new Text(participantname);
+            Bottomparticipantnametext.setStyle("-fx-font-size: 15;-fx-font-weight: bold;");
+            Bottomparticipantnametext.setX(5+startX);
+            Bottomparticipantnametext.setY(AreaY-10);
+
+            for (int m = 0; m < messageCount; m++)
+            {
+                //System.out.println("Message m je "+m);
+                if (sqlist.get(0).getMessageList().get(m).getType()==1 && sqlist.get(0).getMessageList().get(m).getFirstClass().getName() == sqlist.get(0).getParticipantList().get(i-1).getName())
+                {
+                    Activate = (linelenght / messageCount) *(m+1);
+                    System.out.println("Aktivacia "+participantname + " prebehne na sprave cislo "+m + " a akt je "+Activate);
+                }
+                if (sqlist.get(0).getMessageList().get(m).getType()==2 && sqlist.get(0).getMessageList().get(m).getFirstClass().getName() == sqlist.get(0).getParticipantList().get(i-1).getName())
+                {
+                    Deactivate = (linelenght / messageCount) *(m+1);
+                    System.out.println("Dektivacia "+participantname + " prebehne na sprave cislo "+m + " a dea je "+Deactivate);
+                }
+                Line messageline = new Line(); //instantiating Line class
+                messageline.setStartX(startX+(participantname.length() * 10/2)); //setting starting X point of Line
+                messageline.setStartY(startY+50 + Activate); //setting starting Y point of Line
+                messageline.setEndX(startX+(participantname.length() * 10/2)); //setting ending X point of Line
+                messageline.setEndY(startY+50+ Deactivate); //setting ending Y point of Line
+                messageline.setStroke(Color.BLUE);
+                messageline.setStrokeWidth(5);
+                diagram.getChildren().addAll(messageline);
+            }
+
+            diagram.getChildren().addAll(UpperRect,Upperparticipantnametext,line,BottomRect,Bottomparticipantnametext);
+
+        }
+        rootpane.getChildren().add(diagram);
+
+
+
+       /* for (int i = 0; i < participantsCount; i++)
+        {
+
+
+        }*/
+
+       /* if (participantsCount==1)
+        {
+            String participantname = sqlist.get(0).getParticipantList().get(0).getName();
+            Region rect = new Region(); //instantiating Rectangle
+            int startX = (AreaX/2)-(participantname.length()/2);
+            int startY = 50;
+            rect.setLayoutX(startX); //setting the X coordinate of upper left //corner of rectangle
+            rect.setLayoutY(startY); //setting the Y coordinate of upper left //corner of rectangle
+            rect.setPrefWidth(participantname.length() * 10); //setting the width of rectangle
+            rect.setPrefHeight(30); //setting the width of rectangle
+
+            Text participantnametext = new Text(participantname);
+            participantnametext.setStyle("-fx-font-size: 15;-fx-font-weight: bold;");
+
+            participantnametext.setX(5+(AreaX/2)-(participantname.length()/2));
+            //startX + 5 + (participantname.length() * 10 / 2))
+            //text.setX(startX + maxLenght*10 - ((className.length()*10) / 2));
+            //text.setX(100);
+            participantnametext.setY(70);
+
+            Line line = new Line(); //instantiating Line class
+            line.setStartX(startX+(participantname.length() * 10/2)); //setting starting X point of Line
+            line.setStartY(startY + 30); //setting starting Y point of Line
+            line.setEndX(startX+(participantname.length() * 10/2)); //setting ending X point of Line
+            line.setEndY(AreaY); //setting ending Y point of Line
+
+            diagram.getChildren().addAll(rect,participantnametext,line);
+            rootpane.getChildren().add(diagram);
+        }
+
+        //if (participantsCount==2)
+        //{
+            String participantname = sqlist.get(0).getParticipantList().get(0).getName();
+            Region rect = new Region(); //instantiating Rectangle
+            int startX = (int)stage.getWidth() - AreaX;
+            int startY = 50;
+            rect.setLayoutX(startX); //setting the X coordinate of upper left //corner of rectangle
+            rect.setLayoutY(startY); //setting the Y coordinate of upper left //corner of rectangle
+            rect.setPrefWidth(participantname.length() * 10); //setting the width of rectangle
+            rect.setPrefHeight(30); //setting the width of rectangle
+
+            Text participantnametext = new Text(participantname);
+            participantnametext.setStyle("-fx-font-size: 15;-fx-font-weight: bold;");
+
+            participantnametext.setX(startX +5);
+            //startX + 5 + (participantname.length() * 10 / 2))
+            //text.setX(startX + maxLenght*10 - ((className.length()*10) / 2));
+            //text.setX(100);
+            participantnametext.setY(70);
+
+            Line line = new Line(); //instantiating Line class
+            line.setStartX(startX+(participantname.length() * 10/2)); //setting starting X point of Line
+            line.setStartY(startY + 30); //setting starting Y point of Line
+            line.setEndX(startX+(participantname.length() * 10/2)); //setting ending X point of Line
+            line.setEndY(AreaY); //setting ending Y point of Line
+
+            diagram.getChildren().addAll(rect,participantnametext,line);
+            rootpane.getChildren().add(diagram);
+
+            String participantname = sqlist.get(0).getParticipantList().get(0).getName();
+            Region rect = new Region(); //instantiating Rectangle
+            int startX = (int)stage.getWidth() - AreaX;
+            int startY = 50;
+            rect.setLayoutX(startX); //setting the X coordinate of upper left //corner of rectangle
+            rect.setLayoutY(startY); //setting the Y coordinate of upper left //corner of rectangle
+            rect.setPrefWidth(participantname.length() * 10); //setting the width of rectangle
+            rect.setPrefHeight(30); //setting the width of rectangle
+
+            Text participantnametext = new Text(participantname);
+            participantnametext.setStyle("-fx-font-size: 15;-fx-font-weight: bold;");
+
+            participantnametext.setX(startX +5);
+            //startX + 5 + (participantname.length() * 10 / 2))
+            //text.setX(startX + maxLenght*10 - ((className.length()*10) / 2));
+            //text.setX(100);
+            participantnametext.setY(70);
+
+            Line line = new Line(); //instantiating Line class
+            line.setStartX(startX+(participantname.length() * 10/2)); //setting starting X point of Line
+            line.setStartY(startY + 30); //setting starting Y point of Line
+            line.setEndX(startX+(participantname.length() * 10/2)); //setting ending X point of Line
+            line.setEndY(AreaY); //setting ending Y point of Line
+
+            diagram.getChildren().addAll(rect,participantnametext,line);
+            rootpane.getChildren().add(diagram);
+        //}
+    //int participantscount = sqlist.size();
+    //System.out.println("participantscount size je "+participantscount);
+        System.out.println("participantov je "+sqlist.get(0).getParticipantList().size());
+        //System.out.println("Stagesize je "+(int)stage.getWidth()+ " a " +(int)stage.getHeight());
+*/
+
+    }
 
 }
