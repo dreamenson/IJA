@@ -165,10 +165,11 @@ public class App extends Application {
 
         });
 
-        Scene scene = new Scene(rootpane, 600, 600);
+        Scene scene = new Scene(rootpane, 1200, 700);
         scene.getStylesheets().add("css.css");
 
         stage.setScene(scene);
+        stage.setMaximized(true);
         stage.show();
 
         ChangeListener stageSizeListener = (observable, oldValue, newValue) -> {
