@@ -1,5 +1,6 @@
 package back;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -95,6 +96,85 @@ public class FileHandler {
                 }
             });
         });
+    }
+
+    public void write(String path) {
+        StringBuilder sb = new StringBuilder();
+        if (classd != null) {
+            addText(sb, "@startclass " + classd.getName(), 2);
+            classd.getClassList().forEach( (n) -> {
+                if (n instanceof UMLClass) {
+                    UMLClass uc = (UMLClass) n;
+                    addText(sb, "Class " + uc.getName() + " {", 1);
+                    uc.getAttributes().forEach( (a) -> {
+                        addText(sb, a.getType().getName() + " " + a.getName(), 1);
+                    });
+                    uc.getOperations().forEach( (o) -> {
+                        addText(sb, "operation " + o.getType().getName() + " " + o.getName() + "(", 0);
+                        o.getArguments().forEach( (a) -> {
+                            addText(sb, a.getType().getName() + " " + a.getName() + ", ", 0);
+                        });
+                        int length = sb.length();
+                        if (sb.charAt(length - 2) == ',') {
+                            sb.delete(length - 2, length);
+                        }
+                        addText(sb, ")", 1);
+                    });
+                    addText(sb, "}", 1);
+                } else {
+                    UMLInterface uc = (UMLInterface) n;
+                    addText(sb, "Interface " + uc.getName() + " {", 1);
+                    uc.getAttributes().forEach( (a) -> {
+                        addText(sb, a.getType().getName() + " " + a.getName(), 1);
+                    });
+                    uc.getOperations().forEach( (o) -> {
+                        addText(sb, "operation " + o.getType().getName() + " " + o.getName() + "(", 0);
+                        o.getArguments().forEach( (a) -> {
+                            addText(sb, a.getType().getName() + " " + a.getName() + ", ", 0);
+                        });
+                        int length = sb.length();
+                        if (sb.charAt(length - 2) == ',') {
+                            sb.delete(length - 2, length);
+                        }
+                        addText(sb, ")", 1);
+                    });
+                    addText(sb, "}", 1);
+                }
+            });
+        }
+        try {
+            FileWriter myWriter = new FileWriter(path);
+            myWriter.write(sb.toString());
+            myWriter.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+        classd.getRelationList().forEach( (n) -> System.out.println(n.getFirstClass().getName() + " : " + n.getRelation() + " : " + n.getSecondClass().getName()));
+        sqlist.forEach( (n) -> {
+            System.out.println("\nSequence " + n.getName());
+            n.getParticipantList().forEach( (a) -> {
+                System.out.println("Participant " + a.getName());
+            });
+            n.getMessageList().forEach( (a) -> {
+                int type = a.getType();
+                if (type == 1) {
+                    System.out.println("activate " + a.getFirstClass().getName());
+                } else if (type == 2) {
+                    System.out.println("deactivate " + a.getFirstClass().getName());
+                } else {
+                    System.out.println(a.getFirstClass().getName() + " : 3 : " + a.getSecondClass().getName() + " " + a.getName());
+                }
+            });
+        });
+    }
+
+    private void addText(StringBuilder sb, String line, int count) {
+        sb.append(line);
+        for (int i = 0; i < count; i++) {
+            sb.append(System.getProperty("line.separator"));
+        }
     }
 
     /**
