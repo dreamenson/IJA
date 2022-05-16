@@ -106,4 +106,33 @@ public class UMLClass extends UMLClassifier {
     public List<UMLOperation> getOperations() {
         return Collections.unmodifiableList(operArray);
     }
+
+    public UMLAttribute addNewAttribute(String attr) {
+        if (!attr.matches("^[+\\-#~]\\w+ \\w+$")){
+            return null;
+        }
+        String[] name = attr.split(" ");
+        UMLAttribute ua = new UMLAttribute(name[1], new UMLClassifier(name[0]));
+        if (!addAttribute(ua)) return null;
+        return ua;
+    }
+
+    public UMLOperation addNewOperation(String oper) {
+        if (!oper.matches("^[+\\-#~]\\w+\\s\\w+\\((\\s*\\w+\\s+\\w+,?)*\\)$")) {
+            return null;
+        }
+        String[] parts = oper.split("\\(");
+        parts[1] = parts[1].substring(0, parts[1].length()-1);
+        String[] name = parts[0].split("\\s");
+        UMLOperation uo = new UMLOperation(name[1], new UMLClassifier(name[0]));
+        if (parts[1].length() != 0) {
+            String[] args = parts[1].split(",\\s*");
+            for (String arg : args) {
+                String[] argname = arg.split("\\s+");
+                uo.addArgument(new UMLAttribute(argname[1], new UMLClassifier(argname[0])));
+            }
+        }
+        if (!addOperation(uo)) return null;
+        return uo;
+    }
 }

@@ -7,39 +7,23 @@ operation +String name(String a, int b, char c)
 operation +String nameo(String a, cr c)
 operation +String namepes()
 }
-Interface Jooz
-Class Flash
 Class Question {
--String id
--String name
-operation +void test(String a)
+-String ID
++String l
+operation +void zubor()
 }
-Class Answer {
-operation +void test(String a, int b, char c)
+Class asjdbfdbg {
+-int aksfph
++String example1
+#int a56
++String example
++int oaisbf
+operation +void test(int b, char c, String ko)
+operation +int example(String a, int b)
 }
 
-Jooz :<|-- : Flash :
-Student : 1 -- + : Flash : Interacts with
-Flash : 1 o-- 1 : Question : has
-Flash : 1 o-- 1 :Answer : has
-Answer:1 *-- 1: Student : has
+Question : generalize : asjdbfdbg
+Student : associate : Question
 
 @endclass
 
-@startsq test
-
-Participant Flash
-Participant Question
-Participant Answer
-
-activate Flash
-Flash -- Flash akjsbf
-activate Question
-Flash - Question move()
-Question - Question ask()
-activate Answer
-deactivate Flash
-deactivate Question
-deactivate Answer
-
-@endsq

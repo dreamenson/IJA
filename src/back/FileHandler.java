@@ -13,20 +13,29 @@ import java.util.Objects;
  * @author Viliam Holik - xholik14
  */
 public class FileHandler {
-    private final String path;
+    private String path;
     private int classType;  // 1=class diagram, 2=sequence diagram
     private ClassDiagram classd;
     private UMLClass umlClass;
     private UMLInterface umlInterface;
     private final List<SequenceDiagram> sqlist= new ArrayList<>();
     private SequenceDiagram activeSq;
+    private static FileHandler instance;
 
     /**
      * Vytvori objekt pre pracu so suborom
-     * @param name retazec absolutnej cesty k suboru s UML diagramom
      */
     public FileHandler(String name) {
         path = name;
+    }
+
+    public static FileHandler getInstance() {
+        return instance;
+    }
+
+    public static FileHandler createInstance(String name) {
+        instance = new FileHandler(name);
+        return instance;
     }
 
     /**
@@ -41,7 +50,7 @@ public class FileHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("ClassDiagram - " + classd.getName());
+        /*System.out.println("ClassDiagram - " + classd.getName());
         classd.getClassList().forEach( (n) -> {
             if(n instanceof UMLClass) {
                 System.out.println("Class " + n.getName());
@@ -82,9 +91,7 @@ public class FileHandler {
         classd.getRelationList().forEach( (n) -> System.out.println(n.getFirstClass().getName() + " : " + n.getRelation() + " : " + n.getSecondClass().getName()));
         sqlist.forEach( (n) -> {
             System.out.println("\nSequence " + n.getName());
-            n.getParticipantList().forEach( (a) -> {
-                System.out.println("Participant " + a.getName());
-            });
+            n.getParticipantList().forEach( (a) -> System.out.println("Participant " + a.getName()));
             n.getMessageList().forEach( (a) -> {
                 int type = a.getType();
                 if (type == 1) {
@@ -95,10 +102,14 @@ public class FileHandler {
                     System.out.println(a.getFirstClass().getName() + " : 3 : " + a.getSecondClass().getName() + " " + a.getName());
                 }
             });
-        });
+        });*/
     }
 
-    public void write(String path) {
+    public void setPath(String name) {
+        path = name;
+    }
+
+    public void write() {
         StringBuilder sb = new StringBuilder();
         if (classd != null) {
             addText(sb, "@startclass " + classd.getName(), 2);
@@ -106,32 +117,10 @@ public class FileHandler {
                 if (n instanceof UMLClass) {
                     UMLClass uc = (UMLClass) n;
                     addText(sb, "Class " + uc.getName() + " {", 1);
-                    uc.getAttributes().forEach( (a) -> {
-                        addText(sb, a.getType().getName() + " " + a.getName(), 1);
-                    });
-                    uc.getOperations().forEach( (o) -> {
+                    uc.getAttributes().forEach((a) -> addText(sb, a.getType().getName() + " " + a.getName(), 1));
+                    uc.getOperations().forEach((o) -> {
                         addText(sb, "operation " + o.getType().getName() + " " + o.getName() + "(", 0);
-                        o.getArguments().forEach( (a) -> {
-                            addText(sb, a.getType().getName() + " " + a.getName() + ", ", 0);
-                        });
-                        int length = sb.length();
-                        if (sb.charAt(length - 2) == ',') {
-                            sb.delete(length - 2, length);
-                        }
-                        addText(sb, ")", 1);
-                    });
-                    addText(sb, "}", 1);
-                } else {
-                    UMLInterface uc = (UMLInterface) n;
-                    addText(sb, "Interface " + uc.getName() + " {", 1);
-                    uc.getAttributes().forEach( (a) -> {
-                        addText(sb, a.getType().getName() + " " + a.getName(), 1);
-                    });
-                    uc.getOperations().forEach( (o) -> {
-                        addText(sb, "operation " + o.getType().getName() + " " + o.getName() + "(", 0);
-                        o.getArguments().forEach( (a) -> {
-                            addText(sb, a.getType().getName() + " " + a.getName() + ", ", 0);
-                        });
+                        o.getArguments().forEach((a) -> addText(sb, a.getType().getName() + " " + a.getName() + ", ", 0));
                         int length = sb.length();
                         if (sb.charAt(length - 2) == ',') {
                             sb.delete(length - 2, length);
@@ -140,7 +129,30 @@ public class FileHandler {
                     });
                     addText(sb, "}", 1);
                 }
+//                } else {
+//                    UMLInterface uc = (UMLInterface) n;
+//                    addText(sb, "Interface " + uc.getName() + " {", 1);
+//                    uc.getAttributes().forEach( (a) -> addText(sb, a.getType().getName() + " " + a.getName(), 1));
+//                    uc.getOperations().forEach( (o) -> {
+//                        addText(sb, "operation " + o.getType().getName() + " " + o.getName() + "(", 0);
+//                        o.getArguments().forEach( (a) -> addText(sb, a.getType().getName() + " " + a.getName() + ", ", 0));
+//                        int length = sb.length();
+//                        if (sb.charAt(length - 2) == ',') {
+//                            sb.delete(length - 2, length);
+//                        }
+//                        addText(sb, ")", 1);
+//                    });
+//                    addText(sb, "}", 1);
+//                }
             });
+            addText(sb, "", 1);
+
+            classd.getRelationList().forEach( r -> {
+                addText(sb, r.getFirstClass().getName() + " : " + r.getTypeOfRelation() + " : " + r.getSecondClass().getName(), 1);
+            });
+            addText(sb, "", 1);
+
+            addText(sb, "@endclass", 2);
         }
         try {
             FileWriter myWriter = new FileWriter(path);
@@ -154,9 +166,7 @@ public class FileHandler {
         classd.getRelationList().forEach( (n) -> System.out.println(n.getFirstClass().getName() + " : " + n.getRelation() + " : " + n.getSecondClass().getName()));
         sqlist.forEach( (n) -> {
             System.out.println("\nSequence " + n.getName());
-            n.getParticipantList().forEach( (a) -> {
-                System.out.println("Participant " + a.getName());
-            });
+            n.getParticipantList().forEach( (a) -> System.out.println("Participant " + a.getName()));
             n.getMessageList().forEach( (a) -> {
                 int type = a.getType();
                 if (type == 1) {
@@ -198,7 +208,6 @@ public class FileHandler {
      * @param line riadok zo vstupneho suboru
      */
     private void parseLine(String line) {
-//        System.out.println(line);
         String[] words = line.split("\\s+");
         switch (words[0]) {
             case "@startclass":
@@ -361,7 +370,7 @@ public class FileHandler {
                 type = 4;
                 break;
             default:
-                type = 1;
+                type = 2;
         }
 
         UMLRelation ur = classd.createRelation(relation[0], relation[2], type);

@@ -1,10 +1,13 @@
 package back;
 
+import gui.GUMLClassifier;
+
 /**
  * Trieda reprezentuje klasifikator v diagrame
  * @author Viliam Holik
  */
 public class UMLClassifier extends Element {
+    private GUMLClassifier gumlClassifier;
     private final boolean isUserDefined;
 
     /**
@@ -48,6 +51,14 @@ public class UMLClassifier extends Element {
      * @return retazec reprezentujuci klasifikator
      */
     public String toString() {
-        return name+"("+ isUserDefined+")";
+        return name;
+    }
+
+    public void addG(GUMLClassifier gumlClassifier) {
+        this.gumlClassifier = gumlClassifier;
+    }
+
+    public GUMLClassifier getG() {
+        return gumlClassifier;
     }
 }

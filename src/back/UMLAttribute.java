@@ -22,14 +22,24 @@ public class UMLAttribute extends Element {
      * @return typ atributu
      */
     public UMLClassifier getType() {
-        return this.type;
+        return type;
     }
 
     /**
-     * Vracia retazec reprezentujuci stav atributu v podobe "nazov:typ"
+     * Vracia retazec reprezentujuci stav atributu v podobe "typ nazov"
      * @return retazec reprezentujuci atribut
      */
-    public java.lang.String toString() {
-        return String.format("%s:%s", this.name, this.type);
+    public String toString() {
+        return String.format("%s %s", type, name);
+    }
+
+    public boolean renameWhole(String newName) {
+        if (!newName.matches("^[+\\-#~]\\w+ \\w+")) {
+            return false;
+        }
+        String[] name = newName.split("\\s");
+        type.rename(name[0]);
+        this.rename(name[1]);
+        return true;
     }
 }

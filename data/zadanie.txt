@@ -2,12 +2,12 @@
 
 Class Element {
 +String name
-operation +void Element(String name)
+operation + Element(String name)
 operation +String getName()
 operation +void rename(String name)
 }
 Class UMLClassifier {
-operation +void UMLClassifier(String name)
+operation + UMLClassifier(String name)
 operation +boolean isUserDefined()
 }
 Class UMLClass {
@@ -31,7 +31,7 @@ Element : generalize : UMLAttribute
 UMLClassifier : generalize : UMLClass
 UMLClassifier : associate : UMLAttribute
 UMLAttribute : associate : UMLClass
-ClassDiagram : associate : ClassDiagram
+UMLClassifier : associate : ClassDiagram
 
 @endclass
 
@@ -42,6 +42,12 @@ Participant ClassDiagram
 Participant UMLClass c1
 Participant UMLAttribute a1
 
+@endsq
 
+@startsq ajsfbvaf
+
+Main Main
+Participant UMLClass c1
+Participant UMLAttribute a1
 
 @endsq

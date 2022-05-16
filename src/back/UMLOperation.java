@@ -57,4 +57,37 @@ public class UMLOperation extends UMLAttribute {
     public List<UMLAttribute> getArguments() {
         return Collections.unmodifiableList(attrList);
     }
+
+    public String toString() {
+        String name = this.getType().getName() + " " + this.getName() + "(";
+        StringBuilder args = new StringBuilder(name);
+        this.getArguments().forEach( (a) -> args.append(a.getType().getName() + " " + a.getName() + ", "));
+        int length = args.length();
+        if (args.charAt(length - 2) == ',') {
+            args.delete(length - 2, length);
+        }
+        args.append(")");
+        return args.toString();
+    }
+
+    public boolean renameWhole(String newName) {
+        if (!newName.matches("^[+\\-#~]\\w+\\s\\w+\\((\\s*\\w+\\s+\\w+,?)*\\)$")) {
+            return false;
+        }
+        String[] parts = newName.split("\\(");
+        parts[1] = parts[1].substring(0, parts[1].length() - 1);
+        String[] name = parts[0].split("\\s");
+        this.getType().rename(name[0]);
+        this.rename(name[1]);
+        attrList = new ArrayList<>();
+        if (parts[1].length() == 0) {
+            return true;
+        }
+        String[] args = parts[1].split(",\\s");
+        for (String arg : args) {
+            String[] argname = arg.split("\\s");
+            addArgument(new UMLAttribute(argname[1], new UMLClassifier(argname[0])));
+        }
+        return true;
+    }
 }

@@ -1,7 +1,11 @@
 package back;
 
+import gui.GClassDiagram;
+import gui.GUMLRelation;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -9,8 +13,9 @@ import java.util.List;
  * @author Viliam Holik
  */
 public class ClassDiagram extends Element {
-    List<UMLClassifier> classList = new ArrayList<>();
-    List<UMLRelation> relationList = new ArrayList<>();
+    private GClassDiagram gClassDiagram;
+    private List<UMLClassifier> classList = new ArrayList<>();
+    private List<UMLRelation> relationList = new ArrayList<>();
 
     /**
      * Vytvori instaciu diagramu. Kazdy diagram ma svoj nazov
@@ -106,12 +111,35 @@ public class ClassDiagram extends Element {
         return Collections.unmodifiableList(classList);
     }
 
+    public void removeClass(UMLClassifier classifier) {
+        Iterator<UMLRelation> i = relationList.iterator();
+        while (i.hasNext()) {
+            UMLRelation gr = i.next();
+            if (gr.getFirstClass() == classifier || gr.getSecondClass() == classifier) {
+                i.remove();
+            }
+        }
+        classList.remove(classifier);
+    }
+
     /**
      * Vracia nemodifikovatelny zoznam relacii ktore sa nachadzaju v diagrame
      * @return nemodifikovatelny zoznam relacii
      */
     public List<UMLRelation> getRelationList() {
         return Collections.unmodifiableList(relationList);
+    }
+
+    public void addG(GClassDiagram gClassDiagram) {
+        this.gClassDiagram = gClassDiagram;
+    }
+
+    public GClassDiagram getG() {
+        return gClassDiagram;
+    }
+
+    public void removeRelation(UMLRelation umlRelation) {
+        relationList.remove(umlRelation);
     }
 }
 

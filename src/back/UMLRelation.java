@@ -52,4 +52,19 @@ public class UMLRelation {
     public void changeRelation(int relation) {
         this.relation = relation;
     }
+
+    public String getTypeOfRelation() {
+        switch (relation){
+            case 1:
+                return "generalize";
+            case 2:
+                return "associate";
+            case 3:
+                return "agregate";
+            case 4:
+                return "composite";
+            default:
+                throw new IllegalStateException("Unexpected value: " + relation);
+        }
+    }
 }
