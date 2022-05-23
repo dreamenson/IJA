@@ -1,0 +1,30 @@
+@startclass uml
+
+Class Element {
++String name
+operation + Element(String name)
+operation +String getName()
+operation +void rename(String name)
+}
+Class UMLClassifier {
+operation + UMLClassifier(String name)
+operation +boolean isUserDefined()
+}
+Class UMLClass {
++List<UMLAttribute> attributes
+operation +boolean addAttribute(UMLAttribute attr)
+operation +int getAttrPosition(UMLAttribute attr)
+}
+Class UMLAttribute {
++UMLClassifier type
+operation +UMLClassifier getType()
+}
+
+Element : generalize : UMLClassifier
+Element : generalize : UMLAttribute
+UMLClassifier : generalize : UMLClass
+UMLClassifier : associate : UMLAttribute
+UMLAttribute : associate : UMLClass
+
+@endclass
+
